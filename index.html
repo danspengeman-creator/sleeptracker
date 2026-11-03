@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2a2d6b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sleep Journal">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Sleep Journal</title>
+<style>
+:root{--bg:#f3f1f8;--card:#fff;--ink:#1f2140;--muted:#6b6e8e;--line:#e3e1ee;--accent:#5b5fc7;--deep:#2a2d6b;--q1:#e5736b;--q2:#f0a35e;--q3:#f3d36b;--q4:#9ad4a8;--q5:#4fb286}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);padding-bottom:calc(76px + env(safe-area-inset-bottom));font-size:16px;line-height:1.35}
+body.lock{overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+header{background:linear-gradient(135deg,#2a2d6b,#4a4fb0);color:#fff;padding:calc(14px + env(safe-area-inset-top)) 16px 16px;display:flex;justify-content:space-between;align-items:center}
+header h1{font-size:20px;margin:0;font-weight:650;letter-spacing:.2px}
+header h1 span{opacity:.8;font-weight:400;font-size:13px;display:block;margin-top:2px}
+#sync{background:rgba(255,255,255,.16);border:0;color:#fff;border-radius:14px;padding:6px 11px;font-size:12px}
+main{max-width:620px;margin:0 auto;padding:14px}
+.card{background:var(--card);border-radius:16px;padding:14px;margin-bottom:14px;box-shadow:0 1px 3px rgba(40,40,90,.08)}
+.card h2{font-size:15px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 10px}
+.faces{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.face{border:2px solid var(--line);background:#fff;border-radius:14px;padding:8px 0 6px;font-size:26px;line-height:1.1}
+.face small{display:block;font-size:11px;color:var(--muted);margin-top:3px}
+.face.on{border-color:var(--ink)}
+.face[data-q="1"].on{background:var(--q1)}.face[data-q="2"].on{background:var(--q2)}.face[data-q="3"].on{background:var(--q3)}.face[data-q="4"].on{background:var(--q4)}.face[data-q="5"].on{background:var(--q5)}
+.face.on small{color:var(--ink)}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.link{background:none;border:0;color:var(--accent);font-weight:600;padding:8px 2px}
+.monthbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.monthbar b{font-size:17px}
+.nav{background:var(--bg);border:0;border-radius:10px;width:40px;height:36px;font-size:18px}
+.nav:disabled{opacity:.35}
+.dow,.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.dow div{text-align:center;font-size:11px;color:var(--muted);padding-bottom:2px}
+.cell{aspect-ratio:1/1;border:0;border-radius:11px;background:#f7f6fb;position:relative;font-size:14px;padding:0;display:flex;align-items:flex-start;justify-content:flex-start}
+.cell span{position:absolute;top:5px;left:7px;font-size:12px;opacity:.75}
+.cell i{position:absolute;bottom:3px;right:6px;font-style:normal;font-size:13px}
+.cell.empty{background:none;pointer-events:none}
+.cell.future{opacity:.35;pointer-events:none}
+.cell.q1{background:var(--q1)}.cell.q2{background:var(--q2)}.cell.q3{background:var(--q3)}.cell.q4{background:var(--q4)}.cell.q5{background:var(--q5)}
+.cell.today{outline:3px solid var(--deep);outline-offset:1px}
+.cell em{font-style:normal;font-weight:700;font-size:17px;margin:auto}
+.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px;align-items:center}
+.legend b{display:inline-block;width:12px;height:12px;border-radius:4px;vertical-align:-1px;margin-right:4px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.stat{background:var(--bg);border-radius:12px;padding:8px;text-align:center}
+.stat b{display:block;font-size:20px}
+.stat span{font-size:11px;color:var(--muted)}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:5}
+nav.tabs button{flex:1;border:0;background:none;padding:10px 0 9px;font-size:12px;color:var(--muted)}
+nav.tabs button b{display:block;font-size:20px;font-weight:400}
+nav.tabs button.on{color:var(--accent);font-weight:650}
+.hide{display:none!important}
+.chart{display:flex;align-items:flex-end;gap:4px;height:110px;margin-top:8px}
+.bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;font-size:10px;color:var(--muted)}
+.bar div{width:100%;border-radius:5px 5px 2px 2px;background:#e8e6f1;min-height:4px}
+.bar span{margin-top:3px}
+.ins{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+.ins:first-of-type{border-top:0}
+.ins small{display:block;color:var(--muted);font-size:12px}
+.pill{white-space:nowrap;font-weight:650;border-radius:10px;padding:2px 9px;height:fit-content;font-size:13px}
+.pill.bad{background:#fbe0dd;color:#9b2c24}.pill.good{background:#dcf2e4;color:#1e6a43}
+.note{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:650;background:var(--accent);color:#fff}
+.btn.alt{background:var(--bg);color:var(--ink)}
+.btn.danger{background:#fbe0dd;color:#9b2c24}
+.sheet{position:fixed;inset:0;background:rgba(20,20,50,.5);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.panel{background:var(--bg);width:100%;max-width:620px;max-height:94vh;overflow-y:auto;border-radius:22px 22px 0 0;padding:16px 14px calc(18px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
+.panel h3{margin:0;font-size:18px}
+.panel .card{margin-bottom:10px}
+.field{margin-bottom:12px}
+.field label,.lab{display:block;font-size:13px;font-weight:650;margin-bottom:5px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:18px;padding:7px 12px;font-size:14px}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip.good.on{background:var(--q5);border-color:var(--q5);color:var(--ink)}
+.grp{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:12px 0 6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input[type=time],select,textarea{width:100%;font:inherit;padding:10px;border:1.5px solid var(--line);border-radius:11px;background:#fff;color:var(--ink)}
+textarea{min-height:76px;resize:vertical}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px}
+.seg button{border:1.5px solid var(--line);background:#fff;border-radius:11px;padding:9px 2px;font-size:13px}
+.seg button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.stepper{display:flex;align-items:center;gap:12px}
+.stepper button{width:40px;height:40px;border-radius:12px;border:0;background:#fff;font-size:22px;border:1.5px solid var(--line)}
+.stepper b{min-width:26px;text-align:center;font-size:19px}
+.hours{font-size:13px;color:var(--muted);margin-top:6px}
+.actions{display:flex;gap:10px;margin-top:6px}
+.actions .btn{flex:1}
+#toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#1f2140;color:#fff;padding:9px 16px;border-radius:20px;font-size:14px;z-index:40;opacity:0;transition:opacity .25s;pointer-events:none}
+#toast.show{opacity:.95}
+.err{color:#9b2c24;font-size:13px;margin:6px 0 0}
+@media (prefers-reduced-motion:no-preference){.panel{animation:up .22s ease-out}@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Sleep Journal<span>Notice what helps and what hurts</span></h1>
+  <button id="sync" type="button">Saved on this device</button>
+</header>
+
+<main>
+  <section id="viewCal">
+    <div class="card" id="quick">
+      <h2 id="quickTitle">How did you sleep last night?</h2>
+      <p class="sub" id="quickSub">One tap to log it. Add details any time.</p>
+      <div class="faces" id="quickFaces"></div>
+      <div class="row"><span class="sub" id="quickInfo" style="margin:8px 0 0"></span><button class="link" id="quickMore" type="button">Add details</button></div>
+    </div>
+
+    <div class="card">
+      <div class="monthbar">
+        <button class="nav" id="prev" type="button" aria-label="Previous month">&#8249;</button>
+        <b id="monthLabel"></b>
+        <button class="nav" id="next" type="button" aria-label="Next month">&#8250;</button>
+      </div>
+      <div class="dow"><div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div></div>
+      <div class="grid" id="grid"></div>
+      <div class="legend">
+        <span><b style="background:var(--q1)"></b>Awful</span>
+        <span><b style="background:var(--q2)"></b>Poor</span>
+        <span><b style="background:var(--q3)"></b>Okay</span>
+        <span><b style="background:var(--q4)"></b>Good</span>
+        <span><b style="background:var(--q5)"></b>Great</span>
+        <span>&#9790; melatonin</span>
+      </div>
+      <div class="stats" id="monthStats"></div>
+      <p class="note">Each day shows the night that ended that morning. Tap any day to log or edit it.</p>
+    </div>
+  </section>
+
+  <section id="viewIns" class="hide"></section>
+</main>
+
+<nav class="tabs">
+  <button id="tabCal" class="on" type="button"><b>&#128197;</b>Calendar</button>
+  <button id="tabIns" type="button"><b>&#128161;</b>Insights</button>
+</nav>
+
+<div class="sheet hide" id="sheet" role="dialog" aria-modal="true">
+  <div class="panel" id="panel">
+    <div class="row" style="margin-bottom:10px">
+      <div><h3 id="sheetTitle"></h3><div class="sub" id="sheetSub" style="margin:2px 0 0"></div></div>
+      <button class="link" id="close" type="button">Close</button>
+    </div>
+
+    <div class="card">
+      <div class="lab">How was your sleep?</div>
+      <div class="faces" id="formFaces"></div>
+      <div class="err hide" id="qErr">Pick a rating to save.</div>
+    </div>
+
+    <div class="card">
+      <div class="lab">What went wrong? <span style="font-weight:400;color:var(--muted)">(skip if nothing)</span></div>
+      <div class="chips" id="issueChips"></div>
+    </div>
+
+    <div class="card">
+      <div class="two">
+        <div class="field"><label for="bed">Went to bed</label><input type="time" id="bed"></div>
+        <div class="field"><label for="wake">Got up</label><input type="time" id="wake"></div>
+        <div class="field"><label for="latency">Time to fall asleep</label>
+          <select id="latency"><option value="">Not sure</option><option value="0">Under 5 min</option><option value="10">About 10 min</option><option value="20">About 20 min</option><option value="30">About 30 min</option><option value="45">About 45 min</option><option value="60">About 1 hour</option><option value="90">About 1.5 hours</option><option value="120">2 hours or more</option></select></div>
+        <div class="field"><label for="awake">Awake during the night</label>
+          <select id="awake"><option value="">Not sure</option><option value="0">Not at all</option><option value="10">About 10 min</option><option value="20">About 20 min</option><option value="30">About 30 min</option><option value="45">About 45 min</option><option value="60">About 1 hour</option><option value="90">About 1.5 hours</option><option value="120">2 hours or more</option></select></div>
+      </div>
+      <div class="hours" id="hours"></div>
+    </div>
+
+    <div class="card">
+      <div class="lab">Did you take melatonin?</div>
+      <div class="seg" id="melSeg"><button type="button" data-v="0">No</button><button type="button" data-v="1">Yes</button></div>
+      <div class="field hide" id="doseRow" style="margin-top:10px"><label for="dose">Dose</label>
+        <select id="dose"><option value="">Not sure</option><option value="0.5">0.5 mg</option><option value="1">1 mg</option><option value="3">3 mg</option><option value="5">5 mg</option><option value="10">10 mg</option></select></div>
+    </div>
+
+    <div class="card">
+      <h2>What was yesterday like?</h2>
+      <p class="sub">This is how the app finds your patterns. Quick guesses are fine.</p>
+      <div class="field"><div class="lab">Stress level</div>
+        <div class="seg" id="stressSeg"><button type="button" data-v="1">Calm</button><button type="button" data-v="2">Mild</button><button type="button" data-v="3">Medium</button><button type="button" data-v="4">High</button><button type="button" data-v="5">Very high</button></div></div>
+      <div class="two">
+        <div class="field"><div class="lab">Caffeine after noon</div><div class="stepper"><button type="button" data-s="caffeine" data-d="-1">&minus;</button><b id="cafVal">0</b><button type="button" data-s="caffeine" data-d="1">+</button></div></div>
+        <div class="field"><div class="lab">Alcoholic drinks</div><div class="stepper"><button type="button" data-s="alcohol" data-d="-1">&minus;</button><b id="alcVal">0</b><button type="button" data-s="alcohol" data-d="1">+</button></div></div>
+      </div>
+      <div id="factorGroups"></div>
+    </div>
+
+    <div class="card">
+      <label class="lab" for="notes">Notes</label>
+      <textarea id="notes" placeholder="Anything else worth remembering"></textarea>
+    </div>
+
+    <div class="actions">
+      <button class="btn danger hide" id="del" type="button" style="flex:0 0 auto">Delete</button>
+      <button class="btn alt" id="cancel" type="button">Cancel</button>
+      <button class="btn" id="save" type="button">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+(function () {
+"use strict";
+
+// ---- Settings: paste these after you deploy Code.gs ----
+var SCRIPT_URL = "";   // Apps Script web app URL (leave empty to keep data on this device only)
+var SYNC_KEY = "";     // must match KEY in Code.gs
+// --------------------------------------------------------
+
+var STORE = "sleepjournal.v1";
+var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var FACES = [["1","😖","Awful"],["2","😕","Poor"],["3","😐","Okay"],["4","🙂","Good"],["5","😊","Great"]];
+
+var ISSUES = [
+  ["fall","Hard to fall asleep"],["night","Woke in the night"],["early","Woke too early"],
+  ["restless","Restless or tossing"],["racing","Racing thoughts"],["dreams","Bad dreams"],
+  ["bathroom","Needed the bathroom"],["temp","Too hot or cold"],["noise","Noise or light"],
+  ["family","Kids or pets"],["pain","Pain or discomfort"],["unrefreshed","Woke up unrefreshed"]
+];
+// [key, label, isHelpful]
+var FACTORS = [
+  ["Mind",[["worry","Worrying a lot"],["workstress","Stressful work"],["conflict","Conflict or bad news"],["busy","Busy mind at bedtime"],["event","Big event coming up"]]],
+  ["Food and drink",[["lateMeal","Ate within 3 hours of bed"],["heavy","Heavy or rich dinner"],["sugar","Spicy or sugary food"],["skipped","Skipped a meal"],["lateFluids","Lots of fluids late"]]],
+  ["Activity",[["exMorning","Exercised earlier in the day",1],["exEvening","Exercised close to bedtime"],["noEx","No exercise"],["nap","Took a nap"],["daylight","Got outside in daylight",1]]],
+  ["Evening",[["screens","Screens close to bedtime"],["workLate","Worked late"],["news","TV or news late"],["bath","Warm bath or shower",1],["wind","Wind-down routine",1],["lateBed","Went to bed late"]]],
+  ["Body",[["sick","Sick or congested"],["achy","Aches or pain"],["cycle","Cycle or hormones"],["meds","New or changed medication"],["travel","Travel or schedule change"]]],
+  ["Bedroom",[["warm","Room too warm"],["noisy","Noisy"],["bright","Too much light"],["newbed","Different bed or place"]]]
+];
+var LABELS = { _caf: "Caffeine after noon", _alc: "Alcohol", _stress: "High stress day" };
+var ISSUE_LABELS = {};
+ISSUES.forEach(function (x) { ISSUE_LABELS[x[0]] = x[1]; });
+FACTORS.forEach(function (g) { g[1].forEach(function (f) { LABELS[f[0]] = f[1]; }); });
+
+function $(id) { return document.getElementById(id); }
+function el(tag, attrs, kids) {
+  var n = document.createElement(tag);
+  if (attrs) { Object.keys(attrs).forEach(function (k) {
+    if (k === "text") n.textContent = attrs[k]; else n.setAttribute(k, attrs[k]);
+  }); }
+  (kids || []).forEach(function (c) { n.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+  return n;
+}
+function pad(n) { return (n < 10 ? "0" : "") + n; }
+function ymd(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+function parseYmd(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
+function todayStr() { return ymd(new Date()); }
+function avg(a) { if (!a.length) return 0; var s = 0; a.forEach(function (x) { s += x; }); return s / a.length; }
+function r1(n) { return Math.round(n * 10) / 10; }
+function fmtHours(min) {
+  var h = Math.floor(min / 60), m = Math.round(min % 60);
+  if (m === 60) { h += 1; m = 0; }
+  return h + "h" + (m ? " " + m + "m" : "");
+}
+function toMin(t) { if (!t) return null; var p = t.split(":"); return (+p[0]) * 60 + (+p[1]); }
+
+// ---------- storage ----------
+var data = { entries: {}, dirty: [], deleted: [] };
+function load() {
+  try {
+    var raw = localStorage.getItem(STORE);
+    if (raw) { var d = JSON.parse(raw); data.entries = d.entries || {}; data.dirty = d.dirty || []; data.deleted = d.deleted || []; }
+  } catch (e) {}
+}
+function persist() { try { localStorage.setItem(STORE, JSON.stringify(data)); } catch (e) {} }
+function addTo(list, v) { if (list.indexOf(v) < 0) list.push(v); }
+function removeFrom(list, v) { var i = list.indexOf(v); if (i >= 0) list.splice(i, 1); }
+
+function calcMinutes(bed, wake, latency, awake) {
+  var b = toMin(bed), w = toMin(wake);
+  if (b === null || w === null) return null;
+  var span = (w - b + 1440) % 1440;
+  if (span === 0) return null;
+  var asleep = span - (latency || 0) - (awake || 0);
+  return asleep > 0 ? asleep : 0;
+}
+
+// ---------- state ----------
+var view = new Date(); view.setDate(1);
+var draft = null;
+var tab = "cal";
+
+function saveEntry(e) {
+  data.entries[e.date] = e;
+  removeFrom(data.deleted, e.date);
+  addTo(data.dirty, e.date);
+  persist();
+  renderAll();
+  sync();
+}
+function deleteEntry(date) {
+  delete data.entries[date];
+  removeFrom(data.dirty, date);
+  addTo(data.deleted, date);
+  persist();
+  renderAll();
+  sync();
+}
+
+// ---------- calendar ----------
+function renderCal() {
+  var y = view.getFullYear(), m = view.getMonth();
+  $("monthLabel").textContent = MONTHS[m] + " " + y;
+  var now = new Date();
+  $("next").disabled = (y === now.getFullYear() && m === now.getMonth()) || (y > now.getFullYear());
+  var grid = $("grid"); grid.innerHTML = "";
+  var first = new Date(y, m, 1).getDay();
+  var days = new Date(y, m + 1, 0).getDate();
+  var t = todayStr();
+  var i;
+  for (i = 0; i < first; i++) grid.appendChild(el("div", { "class": "cell empty" }));
+  var qs = [], poor = 0;
+  for (i = 1; i <= days; i++) {
+    var ds = y + "-" + pad(m + 1) + "-" + pad(i);
+    var e = data.entries[ds];
+    var cls = "cell";
+    if (e && e.quality) { cls += " q" + e.quality; qs.push(e.quality); if (e.quality <= 2) poor++; }
+    if (ds === t) cls += " today";
+    if (ds > t) cls += " future";
+    var b = el("button", { "class": cls, type: "button", "data-d": ds, "aria-label": MONTHS[m] + " " + i }, [el("span", { text: String(i) })]);
+    if (e && e.melatonin) b.appendChild(el("i", { text: "☾" }));
+    grid.appendChild(b);
+  }
+  var st = $("monthStats"); st.innerHTML = "";
+  [[String(qs.length), "nights logged"], [qs.length ? String(r1(avg(qs))) : "-", "average (1 to 5)"], [String(poor), "poor nights"]].forEach(function (s) {
+    st.appendChild(el("div", { "class": "stat" }, [el("b", { text: s[0] }), el("span", { text: s[1] })]));
+  });
+}
+
+function renderQuick() {
+  var t = todayStr(), e = data.entries[t];
+  var box = $("quickFaces"); box.innerHTML = "";
+  FACES.forEach(function (f) {
+    var on = e && e.quality === +f[0];
+    box.appendChild(el("button", { "class": "face" + (on ? " on" : ""), type: "button", "data-q": f[0] }, [f[1], el("small", { text: f[2] })]));
+  });
+  var info = "";
+  if (e && e.quality) {
+    var parts = ["Logged for today"];
+    if (typeof e.minutes === "number") parts.push(fmtHours(e.minutes) + " asleep");
+    info = parts.join(" · ");
+    $("quickMore").textContent = "Edit details";
+  } else {
+    $("quickMore").textContent = "Add details";
+  }
+  $("quickInfo").textContent = info;
+}
+
+// ---------- form ----------
+function buildFormStatics() {
+  var fb = $("formFaces");
+  FACES.forEach(function (f) {
+    fb.appendChild(el("button", { "class": "face", type: "button", "data-q": f[0] }, [f[1], el("small", { text: f[2] })]));
+  });
+  var ic = $("issueChips");
+  ISSUES.forEach(function (x) { ic.appendChild(el("button", { "class": "chip", type: "button", "data-k": x[0], "data-t": "issues", text: x[1] })); });
+  var fg = $("factorGroups");
+  FACTORS.forEach(function (g) {
+    fg.appendChild(el("div", { "class": "grp", text: g[0] }));
+    var wrap = el("div", { "class": "chips" });
+    g[1].forEach(function (f) {
+      wrap.appendChild(el("button", { "class": "chip" + (f[2] ? " good" : ""), type: "button", "data-k": f[0], "data-t": "factors", text: f[1] }));
+    });
+    fg.appendChild(wrap);
+  });
+}
+
+function fillForm() {
+  var d = draft;
+  $("sheetTitle").textContent = "Sleep for " + DAYS[parseYmd(d.date).getDay()] + ", " + MONTHS[parseYmd(d.date).getMonth()] + " " + parseYmd(d.date).getDate();
+  $("sheetSub").textContent = "The night that ended this morning";
+  Array.prototype.forEach.call($("formFaces").children, function (b) { b.classList.toggle("on", +b.getAttribute("data-q") === d.quality); });
+  $("qErr").classList.add("hide");
+  Array.prototype.forEach.call(document.querySelectorAll("#panel .chip"), function (b) {
+    var list = d[b.getAttribute("data-t")] || [];
+    b.classList.toggle("on", list.indexOf(b.getAttribute("data-k")) >= 0);
+  });
+  $("bed").value = d.bed || "";
+  $("wake").value = d.wake || "";
+  $("latency").value = (d.latency === undefined || d.latency === null) ? "" : String(d.latency);
+  $("awake").value = (d.awake === undefined || d.awake === null) ? "" : String(d.awake);
+  setSeg("melSeg", d.melatonin ? 1 : 0);
+  $("doseRow").classList.toggle("hide", !d.melatonin);
+  $("dose").value = d.dose ? String(d.dose) : "";
+  setSeg("stressSeg", d.stress || 0);
+  $("cafVal").textContent = d.caffeine || 0;
+  $("alcVal").textContent = d.alcohol || 0;
+  $("notes").value = d.notes || "";
+  $("del").classList.toggle("hide", !data.entries[d.date]);
+  updateHours();
+}
+function setSeg(id, v) {
+  Array.prototype.forEach.call($(id).children, function (b) { b.classList.toggle("on", +b.getAttribute("data-v") === v && v !== 0 || (id === "melSeg" && +b.getAttribute("data-v") === v)); });
+}
+function numOrNull(id) { var v = $(id).value; return v === "" ? null : +v; }
+function updateHours() {
+  var m = calcMinutes($("bed").value, $("wake").value, numOrNull("latency"), numOrNull("awake"));
+  $("hours").textContent = m === null ? "Add bed and wake times to see hours slept (optional)." : "About " + fmtHours(m) + " of sleep";
+}
+
+function openSheet(ds) {
+  var ex = data.entries[ds];
+  if (ex) {
+    draft = JSON.parse(JSON.stringify(ex));
+    draft.issues = draft.issues || []; draft.factors = draft.factors || [];
+  } else {
+    draft = { date: ds, issues: [], factors: [], melatonin: 0, caffeine: 0, alcohol: 0, stress: 0 };
+    var keys = Object.keys(data.entries).sort().reverse();
+    for (var i = 0; i < keys.length; i++) {
+      var p = data.entries[keys[i]];
+      if (keys[i] < ds && p.bed && p.wake) { draft.bed = p.bed; draft.wake = p.wake; break; }
+    }
+  }
+  fillForm();
+  $("sheet").classList.remove("hide");
+  document.body.classList.add("lock");
+  $("panel").scrollTop = 0;
+}
+function closeSheet() { $("sheet").classList.add("hide"); document.body.classList.remove("lock"); draft = null; }
+
+function commitForm() {
+  if (!draft.quality) { $("qErr").classList.remove("hide"); $("formFaces").scrollIntoView({ block: "center" }); return; }
+  var d = draft;
+  d.bed = $("bed").value || "";
+  d.wake = $("wake").value || "";
+  d.latency = numOrNull("latency");
+  d.awake = numOrNull("awake");
+  d.dose = d.melatonin ? numOrNull("dose") : null;
+  d.notes = $("notes").value.trim();
+  var m = calcMinutes(d.bed, d.wake, d.latency, d.awake);
+  if (m === null) delete d.minutes; else d.minutes = m;
+  d.detailed = true;
+  d.updated = Date.now();
+  saveEntry(d);
+  closeSheet();
+  toast("Saved");
+}
+
+// ---------- insights ----------
+function flagsFor(e) {
+  var f = {};
+  (e.factors || []).forEach(function (k) { f[k] = 1; });
+  if (e.caffeine > 0) f._caf = 1;
+  if (e.alcohol > 0) f._alc = 1;
+  if (e.stress >= 4) f._stress = 1;
+  return f;
+}
+function stdev(a) { if (a.length < 3) return null; var m = avg(a); return Math.sqrt(avg(a.map(function (x) { return (x - m) * (x - m); }))); }
+
+function renderInsights() {
+  var box = $("viewIns"); box.innerHTML = "";
+  var all = Object.keys(data.entries).sort().map(function (k) { return data.entries[k]; }).filter(function (e) { return e.quality; });
+  if (all.length < 3) {
+    box.appendChild(el("div", { "class": "card" }, [el("h2", { text: "Not enough nights yet" }), el("p", { "class": "sub", text: "Log at least 3 nights and your trends will show up here. Patterns usually become clear after 2 to 3 weeks." })]));
+    return;
+  }
+  // summary
+  var poor = all.filter(function (e) { return e.quality <= 2; }).length;
+  var mins = all.filter(function (e) { return typeof e.minutes === "number"; }).map(function (e) { return e.minutes; });
+  var sum = el("div", { "class": "card" }, [el("h2", { text: "All logged nights" })]);
+  var stats = el("div", { "class": "stats" });
+  [[String(all.length), "nights"], [String(r1(avg(all.map(function (e) { return e.quality; })))), "average (1 to 5)"], [String(poor), "poor nights"]].forEach(function (s) {
+    stats.appendChild(el("div", { "class": "stat" }, [el("b", { text: s[0] }), el("span", { text: s[1] })]));
+  });
+  sum.appendChild(stats);
+  if (mins.length) sum.appendChild(el("p", { "class": "note", text: "Average time asleep: " + fmtHours(avg(mins)) + " (" + mins.length + " nights with times)." }));
+  box.appendChild(sum);
+
+  // last 14 days
+  var chartCard = el("div", { "class": "card" }, [el("h2", { text: "Last 14 days" })]);
+  var chart = el("div", { "class": "chart" });
+  var now = new Date();
+  for (var i = 13; i >= 0; i--) {
+    var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+    var e = data.entries[ymd(d)];
+    var bar = el("div");
+    if (e && e.quality) { bar.style.height = (e.quality * 20) + "%"; bar.style.background = "var(--q" + e.quality + ")"; }
+    chart.appendChild(el("div", { "class": "bar" }, [bar, el("span", { text: String(d.getDate()) })]));
+  }
+  chartCard.appendChild(chart);
+  box.appendChild(chartCard);
+
+  // common problems (last 30 days)
+  var cutoff = ymd(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30));
+  var counts = {};
+  all.forEach(function (e) { if (e.date >= cutoff) (e.issues || []).forEach(function (k) { counts[k] = (counts[k] || 0) + 1; }); });
+  var top = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; }).slice(0, 5);
+  if (top.length) {
+    var pc = el("div", { "class": "card" }, [el("h2", { text: "Most common problems" }), el("p", { "class": "sub", text: "Last 30 days" })]);
+    top.forEach(function (k) {
+      pc.appendChild(el("div", { "class": "ins" }, [el("div", { text: ISSUE_LABELS[k] || k }), el("span", { "class": "pill bad", text: counts[k] + (counts[k] === 1 ? " night" : " nights") })]));
+    });
+    box.appendChild(pc);
+  }
+
+  // factor patterns
+  var det = all.filter(function (e) { return e.detailed; });
+  var pat = el("div", { "class": "card" }, [el("h2", { text: "What seems to matter" })]);
+  if (det.length < 10) {
+    pat.appendChild(el("p", { "class": "sub", text: "Fill in the \"What was yesterday like?\" section on at least 10 nights (" + det.length + " so far). Then this shows which habits go with worse or better sleep." }));
+  } else {
+    var results = [];
+    Object.keys(LABELS).forEach(function (k) {
+      var w = [], wo = [];
+      det.forEach(function (e) { (flagsFor(e)[k] ? w : wo).push(e.quality); });
+      if (w.length >= 3 && wo.length >= 3) results.push({ k: k, n: w.length, a: avg(w), b: avg(wo), diff: avg(w) - avg(wo) });
+    });
+    var bad = results.filter(function (r) { return r.diff <= -0.4; }).sort(function (x, y) { return x.diff - y.diff; }).slice(0, 5);
+    var good = results.filter(function (r) { return r.diff >= 0.4; }).sort(function (x, y) { return y.diff - x.diff; }).slice(0, 5);
+    function addRows(list, cls, title) {
+      if (!list.length) return;
+      pat.appendChild(el("div", { "class": "grp", text: title }));
+      list.forEach(function (r) {
+        pat.appendChild(el("div", { "class": "ins" }, [
+          el("div", {}, [el("div", { text: LABELS[r.k] }), el("small", { text: "Avg " + r1(r.a) + " with it vs " + r1(r.b) + " without (" + r.n + " nights)" })]),
+          el("span", { "class": "pill " + cls, text: (r.diff > 0 ? "+" : "") + r1(r.diff) })
+        ]));
+      });
+    }
+    addRows(bad, "bad", "Linked to worse sleep");
+    addRows(good, "good", "Linked to better sleep");
+    if (!bad.length && !good.length) pat.appendChild(el("p", { "class": "sub", text: "No clear patterns yet. Keep logging and check back in a week or two." }));
+    pat.appendChild(el("p", { "class": "note", text: "These are patterns, not proof. A habit can sit alongside bad sleep without causing it." }));
+  }
+  box.appendChild(pat);
+
+  // melatonin
+  var mel = all.filter(function (e) { return e.melatonin; }).map(function (e) { return e.quality; });
+  var nomel = all.filter(function (e) { return !e.melatonin; }).map(function (e) { return e.quality; });
+  if (mel.length >= 3 && nomel.length >= 3) {
+    box.appendChild(el("div", { "class": "card" }, [
+      el("h2", { text: "Melatonin nights" }),
+      el("div", { "class": "ins" }, [el("div", { text: "With melatonin (" + mel.length + " nights)" }), el("b", { text: String(r1(avg(mel))) })]),
+      el("div", { "class": "ins" }, [el("div", { text: "Without (" + nomel.length + " nights)" }), el("b", { text: String(r1(avg(nomel))) })]),
+      el("p", { "class": "note", text: "Melatonin tends to get used on rough nights, so this comparison can be misleading. Worth discussing with a doctor." })
+    ]));
+  }
+
+  // consistency
+  var beds = [], wakes = [];
+  all.forEach(function (e) {
+    var b = toMin(e.bed), w = toMin(e.wake);
+    if (b !== null) beds.push(b < 720 ? b + 1440 : b);
+    if (w !== null) wakes.push(w);
+  });
+  var sb = stdev(beds), sw = stdev(wakes);
+  if (sb !== null && sw !== null) {
+    box.appendChild(el("div", { "class": "card" }, [
+      el("h2", { text: "Schedule consistency" }),
+      el("p", { "class": "sub", text: "Bedtime varies by about " + Math.round(sb) + " min and wake time by about " + Math.round(sw) + " min. Steadier times usually help." })
+    ]));
+  }
+
+  // export
+  var ex = el("div", { "class": "card" }, [el("h2", { text: "Share with a doctor" }), el("p", { "class": "sub", text: "Download every night as a spreadsheet file." }), el("button", { "class": "btn", id: "csvBtn", type: "button", text: "Download CSV" })]);
+  box.appendChild(ex);
+  $("csvBtn").onclick = exportCsv;
+}
+
+function exportCsv() {
+  var cols = ["date","quality","minutes_asleep","bed","wake","minutes_to_fall_asleep","minutes_awake_at_night","melatonin","melatonin_mg","stress","caffeine_after_noon","alcohol","problems","factors","notes"];
+  function q(v) { var s = (v === undefined || v === null) ? "" : String(v); return "\"" + s.replace(/"/g, "\"\"") + "\""; }
+  var rows = [cols.join(",")];
+  Object.keys(data.entries).sort().forEach(function (k) {
+    var e = data.entries[k];
+    rows.push([e.date, e.quality, e.minutes, e.bed, e.wake, e.latency, e.awake, e.melatonin ? "yes" : "no", e.dose, e.stress,
+      e.caffeine, e.alcohol,
+      (e.issues || []).map(function (x) { return ISSUE_LABELS[x] || x; }).join("; "),
+      (e.factors || []).map(function (x) { return LABELS[x] || x; }).join("; "), e.notes].map(q).join(","));
+  });
+  var blob = new Blob([rows.join("\n")], { type: "text/csv" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "sleep-journal.csv";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+// ---------- sync ----------
+var syncing = false, again = false;
+function setStatus(s) {
+  var b = $("sync");
+  b.textContent = { local: "Saved on this device", busy: "Syncing...", ok: "Synced", fail: "Offline - will retry" }[s] || "";
+}
+function api(params) {
+  var q = Object.keys(params).map(function (k) { return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); }).join("&");
+  return fetch(SCRIPT_URL + "?" + q + "&key=" + encodeURIComponent(SYNC_KEY)).then(function (r) { return r.json(); });
+}
+function sync() {
+  if (!SCRIPT_URL) { setStatus("local"); return; }
+  if (syncing) { again = true; return; }
+  syncing = true; setStatus("busy");
+  api({ action: "list" }).then(function (res) {
+    if (!res || !res.ok) throw new Error((res && res.error) || "bad response");
+    var remote = {};
+    res.entries.forEach(function (e) { remote[e.date] = e; });
+    Object.keys(remote).forEach(function (d) {
+      if (data.deleted.indexOf(d) >= 0) return;
+      var l = data.entries[d];
+      if (!l || (remote[d].updated || 0) > (l.updated || 0)) { data.entries[d] = remote[d]; removeFrom(data.dirty, d); }
+    });
+    Object.keys(data.entries).forEach(function (d) {
+      var r = remote[d];
+      if (!r || (data.entries[d].updated || 0) > (r.updated || 0)) addTo(data.dirty, d);
+    });
+    persist();
+    var chain = Promise.resolve();
+    data.dirty.slice().forEach(function (d) {
+      chain = chain.then(function () {
+        var e = data.entries[d];
+        if (!e) { removeFrom(data.dirty, d); return null; }
+        return api({ action: "save", data: JSON.stringify(e) }).then(function (r) {
+          if (!r.ok) throw new Error(r.error || "save failed");
+          removeFrom(data.dirty, d); persist();
+        });
+      });
+    });
+    data.deleted.slice().forEach(function (d) {
+      chain = chain.then(function () {
+        return api({ action: "delete", date: d }).then(function (r) {
+          if (!r.ok) throw new Error(r.error || "delete failed");
+          removeFrom(data.deleted, d); persist();
+        });
+      });
+    });
+    return chain;
+  }).then(function () {
+    syncing = false; setStatus("ok"); renderAll();
+    if (again) { again = false; sync(); }
+  }).catch(function () {
+    syncing = false; again = false; setStatus("fail");
+  });
+}
+
+// ---------- ui plumbing ----------
+var toastTimer;
+function toast(msg) {
+  var t = $("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.classList.remove("show"); }, 1600);
+}
+function setTab(t) {
+  tab = t;
+  $("viewCal").classList.toggle("hide", t !== "cal");
+  $("viewIns").classList.toggle("hide", t !== "ins");
+  $("tabCal").classList.toggle("on", t === "cal");
+  $("tabIns").classList.toggle("on", t === "ins");
+  if (t === "ins") renderInsights();
+  window.scrollTo(0, 0);
+}
+function renderAll() { renderQuick(); renderCal(); if (tab === "ins") renderInsights(); }
+
+function bind() {
+  $("quickFaces").addEventListener("click", function (ev) {
+    var b = ev.target.closest(".face"); if (!b) return;
+    var t = todayStr();
+    var e = data.entries[t] || { date: t, issues: [], factors: [], detailed: false };
+    e.quality = +b.getAttribute("data-q");
+    e.updated = Date.now();
+    saveEntry(e);
+    toast("Logged");
+  });
+  $("quickMore").onclick = function () { openSheet(todayStr()); };
+  $("grid").addEventListener("click", function (ev) {
+    var b = ev.target.closest(".cell"); if (!b || !b.getAttribute("data-d")) return;
+    openSheet(b.getAttribute("data-d"));
+  });
+  $("prev").onclick = function () { view.setMonth(view.getMonth() - 1); renderCal(); };
+  $("next").onclick = function () { view.setMonth(view.getMonth() + 1); renderCal(); };
+  $("tabCal").onclick = function () { setTab("cal"); };
+  $("tabIns").onclick = function () { setTab("ins"); };
+  $("sync").onclick = function () { if (SCRIPT_URL) sync(); else toast("Sync is not set up yet"); };
+
+  $("formFaces").addEventListener("click", function (ev) {
+    var b = ev.target.closest(".face"); if (!b) return;
+    draft.quality = +b.getAttribute("data-q");
+    Array.prototype.forEach.call($("formFaces").children, function (x) { x.classList.toggle("on", x === b); });
+    $("qErr").classList.add("hide");
+  });
+  $("panel").addEventListener("click", function (ev) {
+    var c = ev.target.closest(".chip");
+    if (c) {
+      var list = draft[c.getAttribute("data-t")], k = c.getAttribute("data-k");
+      var i = list.indexOf(k);
+      if (i >= 0) list.splice(i, 1); else list.push(k);
+      c.classList.toggle("on");
+      return;
+    }
+    var s = ev.target.closest(".stepper button");
+    if (s) {
+      var key = s.getAttribute("data-s");
+      draft[key] = Math.max(0, Math.min(9, (draft[key] || 0) + (+s.getAttribute("data-d"))));
+      $(key === "caffeine" ? "cafVal" : "alcVal").textContent = draft[key];
+    }
+  });
+  $("melSeg").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button"); if (!b) return;
+    draft.melatonin = +b.getAttribute("data-v");
+    setSeg("melSeg", draft.melatonin);
+    $("doseRow").classList.toggle("hide", !draft.melatonin);
+  });
+  $("stressSeg").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button"); if (!b) return;
+    var v = +b.getAttribute("data-v");
+    draft.stress = draft.stress === v ? 0 : v;
+    setSeg("stressSeg", draft.stress);
+  });
+  ["bed", "wake", "latency", "awake"].forEach(function (id) { $(id).addEventListener("input", updateHours); $(id).addEventListener("change", updateHours); });
+  $("save").onclick = commitForm;
+  $("cancel").onclick = closeSheet;
+  $("close").onclick = closeSheet;
+  $("del").onclick = function () {
+    if (window.confirm("Delete this night?")) { var d = draft.date; closeSheet(); deleteEntry(d); toast("Deleted"); }
+  };
+  $("sheet").addEventListener("click", function (ev) { if (ev.target === $("sheet")) closeSheet(); });
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) sync(); });
+}
+
+load();
+buildFormStatics();
+bind();
+renderAll();
+setStatus(SCRIPT_URL ? "busy" : "local");
+sync();
+})();
+</script>
+</body>
+</html>
