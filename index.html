@@ -253,7 +253,7 @@ details.cat .field{margin-bottom:12px}
 "use strict";
 
 // ---- Settings: paste these after you deploy Code.gs ----
-var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzOGJH7LSO_VssEEt0DdLQdK09VkXOMLr70l4TeT2Zcas6BstFcNjmNLPP56Z7APSvuKQ/exec";   // Apps Script web app URL (leave empty to keep data on this device only)
+var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrrgFyw5-xIHq4MTNf2RFmGuNszWe9tR2RrKQQgvSSr9-CBVUZ25ZuhS2brwWSTSo5uA/exec";   // Apps Script web app URL (leave empty to keep data on this device only)
 var SYNC_KEY = "6b97985fff1b168840c86ad5b25d6e40";     // must match KEY in Code.gs
 // --------------------------------------------------------
 
@@ -1011,14 +1011,16 @@ function exportCsv() {
 }
 
 // ---------- sync ----------
-var syncing = false, again = false;
+var syncing = false, again = false, lastSyncError = "";
 function setStatus(s) {
   var b = $("sync");
   b.textContent = { local: "Saved on this device", busy: "Syncing...", ok: "Synced", fail: "Offline - will retry" }[s] || "";
 }
 function api(params) {
   var q = Object.keys(params).map(function (k) { return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); }).join("&");
-  return fetch(SCRIPT_URL + "?" + q + "&key=" + encodeURIComponent(SYNC_KEY)).then(function (r) { return r.json(); });
+  return fetch(SCRIPT_URL + "?" + q + "&key=" + encodeURIComponent(SYNC_KEY)).then(function (r) { return r.text(); }).then(function (t) {
+    try { return JSON.parse(t); } catch (e) { throw new Error("The script did not return data. Check that access is set to Anyone and the URL is the newest deployment."); }
+  });
 }
 function sync() {
   if (!SCRIPT_URL) { setStatus("local"); return; }
@@ -1059,10 +1061,11 @@ function sync() {
     });
     return chain;
   }).then(function () {
-    syncing = false; setStatus("ok"); renderAll();
+    syncing = false; lastSyncError = ""; setStatus("ok"); renderAll();
     if (again) { again = false; sync(); }
-  }).catch(function () {
+  }).catch(function (err) {
     syncing = false; again = false; setStatus("fail");
+    lastSyncError = (err && err.message) ? err.message : "Could not reach the script.";
   });
 }
 
@@ -1102,7 +1105,11 @@ function bind() {
   $("next").onclick = function () { view.setMonth(view.getMonth() + 1); renderCal(); };
   $("tabCal").onclick = function () { setTab("cal"); };
   $("tabIns").onclick = function () { setTab("ins"); };
-  $("sync").onclick = function () { if (SCRIPT_URL) sync(); else toast("Sync is not set up yet"); };
+  $("sync").onclick = function () {
+    if (!SCRIPT_URL) { toast("Sync is not set up yet"); return; }
+    if (lastSyncError && $("sync").textContent.indexOf("Offline") === 0) { window.alert("Sync problem: " + lastSyncError); lastSyncError = ""; }
+    sync();
+  };
 
   $("formFaces").addEventListener("click", function (ev) {
     var b = ev.target.closest(".face"); if (!b) return;
