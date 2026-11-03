@@ -39,9 +39,11 @@ main{max-width:620px;margin:0 auto;padding:14px}
 .nav:disabled{opacity:.35}
 .dow,.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
 .dow div{text-align:center;font-size:11px;color:var(--muted);padding-bottom:2px}
-.cell{aspect-ratio:1/1;border:0;border-radius:11px;background:#f7f6fb;position:relative;font-size:14px;padding:0;display:flex;align-items:flex-start;justify-content:flex-start}
+.cell{aspect-ratio:1/1;border:0;border-radius:11px;background:#f7f6fb;position:relative;font-size:14px;padding:0;display:flex;align-items:flex-start;justify-content:flex-start;overflow:hidden}
 .cell span{position:absolute;top:5px;left:7px;font-size:12px;opacity:.75}
-.cell i{position:absolute;bottom:3px;right:6px;font-style:normal;font-size:13px}
+.cell i{position:absolute;bottom:8px;right:6px;font-style:normal;font-size:13px}
+.cell .st{position:absolute;left:0;right:0;bottom:0;height:5px}
+.cell .mm{position:absolute;top:3px;right:4px;font-size:11px;line-height:1}
 .cell.empty{background:none;pointer-events:none}
 .cell.future{opacity:.35;pointer-events:none}
 .cell.q1{background:var(--q1)}.cell.q2{background:var(--q2)}.cell.q3{background:var(--q3)}.cell.q4{background:var(--q4)}.cell.q5{background:var(--q5)}
@@ -49,6 +51,12 @@ main{max-width:620px;margin:0 auto;padding:14px}
 .cell em{font-style:normal;font-weight:700;font-size:17px;margin:auto}
 .legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:10px;align-items:center}
 .legend b{display:inline-block;width:12px;height:12px;border-radius:4px;vertical-align:-1px;margin-right:4px}
+.legend.l2{margin-top:6px}
+.legend.l2 b{height:6px;border-radius:3px;vertical-align:2px}
+.ctx{font-size:13px;margin-top:6px;color:var(--ink)}
+.ctx span{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:12px;padding:2px 9px;margin:0 6px 4px 0}
+.mbar{height:8px;border-radius:4px;background:#e8e6f1;margin-top:5px;overflow:hidden}
+.mbar div{height:100%;border-radius:4px}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
 .stat{background:var(--bg);border-radius:12px;padding:8px;text-align:center}
 .stat b{display:block;font-size:20px}
@@ -97,6 +105,39 @@ textarea{min-height:76px;resize:vertical}
 #toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#1f2140;color:#fff;padding:9px 16px;border-radius:20px;font-size:14px;z-index:40;opacity:0;transition:opacity .25s;pointer-events:none}
 #toast.show{opacity:.95}
 .err{color:#9b2c24;font-size:13px;margin:6px 0 0}
+.sec{margin:16px 2px 8px}
+.sec h2{font-size:17px;margin:0}
+.seg button small{display:block;font-size:11px;opacity:.75;margin-top:1px}
+.seg button.on small{opacity:.9}
+details.more summary{cursor:pointer;color:var(--accent);font-weight:600;font-size:14px;padding:12px 0 2px;list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more.card summary{padding:0}
+details.cat{background:#fff;border-radius:14px;margin-bottom:8px;border-left:7px solid var(--cc);box-shadow:0 1px 3px rgba(40,40,90,.08);overflow:hidden}
+details.cat>summary{list-style:none;display:flex;align-items:center;gap:10px;padding:14px 12px;font-weight:650;font-size:16px;cursor:pointer}
+details.cat>summary::-webkit-details-marker{display:none}
+details.cat>summary .ic{font-size:20px}
+details.cat>summary .sp{flex:1}
+details.cat>summary .badge{font-size:12px;font-weight:650;background:var(--cc);color:#fff;border-radius:10px;padding:2px 9px}
+details.cat>summary::after{content:"\203A";font-size:22px;color:var(--muted);transform:rotate(90deg);line-height:1}
+details.cat[open]>summary::after{transform:rotate(-90deg)}
+details.cat[open]>summary{background:var(--cb)}
+details.cat .body{padding:10px 12px 14px;background:var(--cb)}
+details.cat .chip.on{background:var(--cc);border-color:var(--cc);color:#fff}
+details.cat .seg button.on{background:var(--cc);border-color:var(--cc)}
+details.cat .field{margin-bottom:12px}
+.actions{position:sticky;bottom:0;background:var(--bg);padding:10px 0 2px;margin-top:8px}
+
+.why{border-left:5px solid var(--accent);padding:2px 0 2px 12px;margin:10px 0}
+.why b{display:block;font-size:15px;margin-bottom:2px}
+.why p{margin:2px 0;font-size:14px}
+.why .tip{color:var(--muted);font-size:13px}
+.why .mine{font-size:13px;color:#7a3a00;background:#fdf0dd;border-radius:8px;padding:3px 8px;display:inline-block;margin-top:3px}
+.why.good{border-left-color:var(--q5)}
+.why.big{background:#e9f6ef;border-radius:12px;padding:10px 12px;border-left-width:6px}
+.lead{font-size:16px;margin:4px 0 10px}
+.lead2{font-size:15px;font-weight:600;margin:12px 0 4px}
+.whyhead{display:flex;gap:12px;align-items:center;margin-bottom:6px}
+.whyhead .big{font-size:34px}
 @media (prefers-reduced-motion:no-preference){.panel{animation:up .22s ease-out}@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}}
 </style>
 </head>
@@ -132,8 +173,9 @@ textarea{min-height:76px;resize:vertical}
         <span><b style="background:var(--q5)"></b>Great</span>
         <span>&#9790; melatonin</span>
       </div>
+      <div class="legend l2" id="legend2"></div>
       <div class="stats" id="monthStats"></div>
-      <p class="note">Each day shows the night that ended that morning. Tap any day to log or edit it.</p>
+      <p class="note">Each day shows the night that ended that morning. The color strip is your cycle phase that night and the moon mark shows full and new moons. Tap any day to log or edit it.</p>
     </div>
   </section>
 
@@ -148,7 +190,7 @@ textarea{min-height:76px;resize:vertical}
 <div class="sheet hide" id="sheet" role="dialog" aria-modal="true">
   <div class="panel" id="panel">
     <div class="row" style="margin-bottom:10px">
-      <div><h3 id="sheetTitle"></h3><div class="sub" id="sheetSub" style="margin:2px 0 0"></div></div>
+      <div><h3 id="sheetTitle"></h3><div class="sub" id="sheetSub" style="margin:2px 0 0"></div><div class="ctx" id="ctx"></div></div>
       <button class="link" id="close" type="button">Close</button>
     </div>
 
@@ -159,51 +201,48 @@ textarea{min-height:76px;resize:vertical}
     </div>
 
     <div class="card">
-      <div class="lab">What went wrong? <span style="font-weight:400;color:var(--muted)">(skip if nothing)</span></div>
+      <div class="field"><div class="lab">Falling asleep</div>
+        <div class="seg" id="latSeg"><button type="button" data-v="10">Quick<small>under 15 min</small></button><button type="button" data-v="30">A while<small>15 to 45 min</small></button><button type="button" data-v="75">Very slow<small>over 45 min</small></button></div></div>
+      <div class="field"><div class="lab">Awake during the night</div>
+        <div class="seg" id="wakeSeg"><button type="button" data-v="0">No</button><button type="button" data-v="1">Once</button><button type="button" data-v="2">Multiple times</button></div></div>
+      <div class="field" style="margin-bottom:0"><div class="lab">Took melatonin</div>
+        <div class="seg" id="melSeg"><button type="button" data-v="0">No</button><button type="button" data-v="1">Yes</button></div></div>
+      <details class="more" id="timesBox"><summary>Bed and wake times (optional)</summary>
+        <div class="two" style="margin-top:10px">
+          <div class="field"><label for="bed">Went to bed</label><input type="time" id="bed"></div>
+          <div class="field"><label for="wake">Got up</label><input type="time" id="wake"></div>
+        </div>
+        <div class="hours" id="hours"></div>
+      </details>
+    </div>
+
+    <div class="card hide" id="issueCard">
+      <div class="lab">What went wrong? <span style="font-weight:400;color:var(--muted)">(optional)</span></div>
       <div class="chips" id="issueChips"></div>
     </div>
 
-    <div class="card">
-      <div class="two">
-        <div class="field"><label for="bed">Went to bed</label><input type="time" id="bed"></div>
-        <div class="field"><label for="wake">Got up</label><input type="time" id="wake"></div>
-        <div class="field"><label for="latency">Time to fall asleep</label>
-          <select id="latency"><option value="">Not sure</option><option value="0">Under 5 min</option><option value="10">About 10 min</option><option value="20">About 20 min</option><option value="30">About 30 min</option><option value="45">About 45 min</option><option value="60">About 1 hour</option><option value="90">About 1.5 hours</option><option value="120">2 hours or more</option></select></div>
-        <div class="field"><label for="awake">Awake during the night</label>
-          <select id="awake"><option value="">Not sure</option><option value="0">Not at all</option><option value="10">About 10 min</option><option value="20">About 20 min</option><option value="30">About 30 min</option><option value="45">About 45 min</option><option value="60">About 1 hour</option><option value="90">About 1.5 hours</option><option value="120">2 hours or more</option></select></div>
-      </div>
-      <div class="hours" id="hours"></div>
-    </div>
-
-    <div class="card">
-      <div class="lab">Did you take melatonin?</div>
-      <div class="seg" id="melSeg"><button type="button" data-v="0">No</button><button type="button" data-v="1">Yes</button></div>
-      <div class="field hide" id="doseRow" style="margin-top:10px"><label for="dose">Dose</label>
-        <select id="dose"><option value="">Not sure</option><option value="0.5">0.5 mg</option><option value="1">1 mg</option><option value="3">3 mg</option><option value="5">5 mg</option><option value="10">10 mg</option></select></div>
-    </div>
-
-    <div class="card">
+    <div class="sec">
       <h2>What was yesterday like?</h2>
-      <p class="sub">This is how the app finds your patterns. Quick guesses are fine.</p>
-      <div class="field"><div class="lab">Stress level</div>
-        <div class="seg" id="stressSeg"><button type="button" data-v="1">Calm</button><button type="button" data-v="2">Mild</button><button type="button" data-v="3">Medium</button><button type="button" data-v="4">High</button><button type="button" data-v="5">Very high</button></div></div>
-      <div class="two">
-        <div class="field"><div class="lab">Caffeine after noon</div><div class="stepper"><button type="button" data-s="caffeine" data-d="-1">&minus;</button><b id="cafVal">0</b><button type="button" data-s="caffeine" data-d="1">+</button></div></div>
-        <div class="field"><div class="lab">Alcoholic drinks</div><div class="stepper"><button type="button" data-s="alcohol" data-d="-1">&minus;</button><b id="alcVal">0</b><button type="button" data-s="alcohol" data-d="1">+</button></div></div>
-      </div>
-      <div id="factorGroups"></div>
+      <p class="sub">Open a category and tap anything that applies. Skip the rest.</p>
     </div>
+    <div id="factorGroups"></div>
 
-    <div class="card">
-      <label class="lab" for="notes">Notes</label>
-      <textarea id="notes" placeholder="Anything else worth remembering"></textarea>
-    </div>
+    <details class="more card" id="noteBox"><summary>Add a note (optional)</summary>
+      <textarea id="notes" placeholder="Anything else worth remembering" style="margin-top:10px"></textarea>
+    </details>
 
     <div class="actions">
       <button class="btn danger hide" id="del" type="button" style="flex:0 0 auto">Delete</button>
       <button class="btn alt" id="cancel" type="button">Cancel</button>
       <button class="btn" id="save" type="button">Save</button>
     </div>
+  </div>
+</div>
+
+<div class="sheet hide" id="whySheet" role="dialog" aria-modal="true">
+  <div class="panel" id="whyPanel">
+    <div id="whyBody"></div>
+    <div class="actions"><button class="btn" id="whyDone" type="button">Done</button></div>
   </div>
 </div>
 
@@ -235,10 +274,10 @@ var FACTORS = [
   ["Food and drink",[["lateMeal","Ate within 3 hours of bed"],["heavy","Heavy or rich dinner"],["sugar","Spicy or sugary food"],["skipped","Skipped a meal"],["lateFluids","Lots of fluids late"]]],
   ["Activity",[["exMorning","Exercised earlier in the day",1],["exEvening","Exercised close to bedtime"],["noEx","No exercise"],["nap","Took a nap"],["daylight","Got outside in daylight",1]]],
   ["Evening",[["screens","Screens close to bedtime"],["workLate","Worked late"],["news","TV or news late"],["bath","Warm bath or shower",1],["wind","Wind-down routine",1],["lateBed","Went to bed late"]]],
-  ["Body",[["sick","Sick or congested"],["achy","Aches or pain"],["cycle","Cycle or hormones"],["meds","New or changed medication"],["travel","Travel or schedule change"]]],
+  ["Body",[["sick","Sick or congested"],["achy","Aches or pain"],["meds","New or changed medication"],["travel","Travel or schedule change"]]],
   ["Bedroom",[["warm","Room too warm"],["noisy","Noisy"],["bright","Too much light"],["newbed","Different bed or place"]]]
 ];
-var LABELS = { _caf: "Caffeine after noon", _alc: "Alcohol", _stress: "High stress day" };
+var LABELS = { _caf: "Caffeine after noon", _stress: "High stress day" };
 var ISSUE_LABELS = {};
 ISSUES.forEach(function (x) { ISSUE_LABELS[x[0]] = x[1]; });
 FACTORS.forEach(function (g) { g[1].forEach(function (f) { LABELS[f[0]] = f[1]; }); });
@@ -264,6 +303,110 @@ function fmtHours(min) {
   return h + "h" + (m ? " " + m + "m" : "");
 }
 function toMin(t) { if (!t) return null; var p = t.split(":"); return (+p[0]) * 60 + (+p[1]); }
+
+
+// ---------- moon phase (mean synodic approximation, good to within about a day) ----------
+var SYNODIC = 29.53058867;
+var MOON_REF = Date.UTC(2000, 0, 6, 18, 14, 0);
+var MOON_NAMES = [
+  [1.85, "New Moon", "🌑"], [7.38, "Waxing Crescent", "🌒"], [9.22, "First Quarter", "🌓"],
+  [14.77, "Waxing Gibbous", "🌔"], [16.61, "Full Moon", "🌕"], [22.15, "Waning Gibbous", "🌖"],
+  [23.99, "Last Quarter", "🌗"], [27.68, "Waning Crescent", "🌘"], [99, "New Moon", "🌑"]
+];
+var MOON_GROUPS = { "new": "New moon week", "waxing": "Waxing (growing)", "full": "Full moon week", "waning": "Waning (shrinking)" };
+var MOON_ORDER = ["new", "waxing", "full", "waning"];
+function moonGroup(age) {
+  if (age < 3.69 || age >= 25.84) return "new";
+  if (age < 11.07) return "waxing";
+  if (age < 18.45) return "full";
+  return "waning";
+}
+// the night that ends on morning ds started at about 10pm the day before
+function moonInfo(ds) {
+  var p = ds.split("-");
+  var d = new Date(+p[0], +p[1] - 1, +p[2] - 1, 22, 0, 0);
+  var days = (d.getTime() - MOON_REF) / 86400000;
+  var age = ((days % SYNODIC) + SYNODIC) % SYNODIC;
+  var i = 0;
+  while (age >= MOON_NAMES[i][0]) i++;
+  return { age: age, name: MOON_NAMES[i][1], emoji: MOON_NAMES[i][2], group: moonGroup(age) };
+}
+
+// ---------- cycle phase (read only from the cycle site, same rules as that site) ----------
+var CYCLE_URL = "https://script.google.com/macros/s/AKfycbzSehW-_n2VdUQCtm-tyiAKSRr-NzUGAg23bVakhmXllduedpt1ZYA69J9gXl0CLrVT/exec";
+var CYC_STORE = "sleepjournal.cycle.v1";
+var CY = {
+  period: ["Period", "#7B4F8E"], follicular: ["Follicular", "#7A99B8"], fertile: ["Fertile window", "#D4845A"],
+  ovulation: ["Fertile window", "#C45E8A"], luteal: ["Luteal", "#5FA67A"], pms: ["Late luteal (PMS)", "#5B8DB8"]
+};
+var CY_ORDER = ["period", "follicular", "fertile", "luteal", "pms"];
+var cycle = { periods: [], ends: [] };
+function anyDate(v) {
+  if (!v) return null;
+  var s = String(v).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  var m = s.match(/^(\w+)\s+(\d{1,2}),?\s+(\d{4})$/);
+  if (m) { var i = MONTHS.indexOf(m[1]); if (i >= 0) return m[3] + "-" + pad(i + 1) + "-" + pad(+m[2]); }
+  return null;
+}
+function uniqSort(a) { var o = {}; a.forEach(function (x) { o[x] = 1; }); return Object.keys(o).sort(); }
+function dayDiff(a, b) { return Math.round((parseYmd(a) - parseYmd(b)) / 86400000); }
+function loadCycle() {
+  try { var raw = localStorage.getItem(CYC_STORE); if (raw) { var c = JSON.parse(raw); if (c && c.periods) cycle = c; } } catch (e) {}
+}
+function fetchCycle() {
+  if (!CYCLE_URL) return;
+  fetch(CYCLE_URL + "?action=read&t=" + Date.now()).then(function (r) { return r.json(); }).then(function (j) {
+    // only period start and end dates are kept. Nothing else from the cycle site is read or stored.
+    var ps = uniqSort((j.periodDates || []).map(anyDate).filter(Boolean));
+    var es = uniqSort((j.periodEndDates || []).map(anyDate).filter(Boolean));
+    if (!ps.length) return;
+    cycle = { periods: ps, ends: es, at: Date.now() };
+    try { localStorage.setItem(CYC_STORE, JSON.stringify(cycle)); } catch (e) {}
+    renderAll();
+  }).catch(function () {});
+}
+function avgCycleLen() {
+  var g = [], P = cycle.periods;
+  for (var i = 1; i < P.length; i++) { var d = dayDiff(P[i], P[i - 1]); if (d > 14 && d < 50) g.push(d); }
+  return g.length ? Math.round(avg(g)) : 28;
+}
+function periodLenFor(start, nextStart) {
+  var len = 5;
+  for (var i = 0; i < cycle.ends.length; i++) {
+    var e = cycle.ends[i];
+    if (e >= start && dayDiff(e, start) <= 12 && (!nextStart || e < nextStart)) { len = Math.max(len, dayDiff(e, start) + 1); break; }
+  }
+  return len;
+}
+// phase on calendar day iso (ymd). null when there is no cycle data that early.
+function cyclePhase(iso) {
+  var P = cycle.periods;
+  if (!P.length) return null;
+  var prior = null, next = null, i;
+  for (i = 0; i < P.length; i++) { if (P[i] <= iso) prior = P[i]; else { next = P[i]; break; } }
+  if (!prior) return null;
+  var len = avgCycleLen();
+  var ds = dayDiff(iso, prior), cd = ds + 1, gap = len;
+  if (next) {
+    gap = dayDiff(next, prior);
+    if (gap > 60) { gap = len; cd = (ds % len) + 1; }
+  } else {
+    if (ds > 60) return null;
+    cd = Math.min(cd, len);
+  }
+  if (cd <= periodLenFor(prior, next)) return "period";
+  var ov = Math.round(gap * 0.57);
+  if (cd >= ov - 2 && cd <= ov) return "ovulation";
+  if (cd >= ov - 5 && cd < ov - 2) return "fertile";
+  var pct = cd / gap;
+  if (pct <= 0.46) return "follicular";
+  if (pct <= 0.86) return "luteal";
+  return "pms";
+}
+function nightStartStr(ds) { var p = ds.split("-"); return ymd(new Date(+p[0], +p[1] - 1, +p[2] - 1)); }
+function phaseForNight(ds) { return cyclePhase(nightStartStr(ds)); }
+function groupPhase(k) { return k === "ovulation" ? "fertile" : k; }
 
 // ---------- storage ----------
 var data = { entries: {}, dirty: [], deleted: [] };
@@ -330,8 +473,22 @@ function renderCal() {
     if (ds > t) cls += " future";
     var b = el("button", { "class": cls, type: "button", "data-d": ds, "aria-label": MONTHS[m] + " " + i }, [el("span", { text: String(i) })]);
     if (e && e.melatonin) b.appendChild(el("i", { text: "☾" }));
+    if (ds <= t) {
+      var ph = phaseForNight(ds);
+      if (ph) { var strip = el("div", { "class": "st" }); strip.style.background = CY[ph][1]; b.appendChild(strip); }
+      var mo = moonInfo(ds);
+      if (mo.name === "Full Moon" || mo.name === "New Moon") b.appendChild(el("div", { "class": "mm", text: mo.emoji }));
+    }
     grid.appendChild(b);
   }
+  var lg = $("legend2"); lg.innerHTML = "";
+  if (cycle.periods.length) {
+    CY_ORDER.forEach(function (k) {
+      var b2 = el("b"); b2.style.background = CY[k][1];
+      lg.appendChild(el("span", {}, [b2, CY[k][0]]));
+    });
+  }
+  lg.appendChild(el("span", { text: "\uD83C\uDF15 full moon \uD83C\uDF11 new moon" }));
   var st = $("monthStats"); st.innerHTML = "";
   [[String(qs.length), "nights logged"], [qs.length ? String(r1(avg(qs))) : "-", "average (1 to 5)"], [String(poor), "poor nights"]].forEach(function (s) {
     st.appendChild(el("div", { "class": "stat" }, [el("b", { text: s[0] }), el("span", { text: s[1] })]));
@@ -358,6 +515,35 @@ function renderQuick() {
 }
 
 // ---------- form ----------
+var CATS = {
+  "Mind": ["\uD83E\uDDE0", "#7B5EA7", "#F1ECF8"],
+  "Food and drink": ["\uD83C\uDF74", "#C9743F", "#FCF0E7"],
+  "Activity": ["\uD83C\uDFC3", "#3E9B6A", "#E8F5EE"],
+  "Evening": ["\uD83C\uDF19", "#4A4FB0", "#E9EAF8"],
+  "Body": ["\uD83D\uDCAA", "#C45E8A", "#FBE9F1"],
+  "Bedroom": ["\uD83D\uDECF\uFE0F", "#2F8F9D", "#E3F3F5"]
+};
+function segField(label, id, opts) {
+  var seg = el("div", { "class": "seg", id: id });
+  opts.forEach(function (o) { seg.appendChild(el("button", { type: "button", "data-v": String(o[0]), text: o[1] })); });
+  return el("div", { "class": "field" }, [el("div", { "class": "lab", text: label }), seg]);
+}
+function latBucket(v) { if (v === undefined || v === null || v === "") return null; return v <= 15 ? 10 : (v <= 45 ? 30 : 75); }
+function wakeBucket(d) {
+  if (d.wakings !== undefined && d.wakings !== null) return d.wakings;
+  if (d.awake === undefined || d.awake === null || d.awake === "") return null;
+  return d.awake === 0 ? 0 : (d.awake <= 20 ? 1 : 2);
+}
+var WAKE_MIN = [0, 15, 45];
+function updateBadges() {
+  if (!draft) return;
+  Array.prototype.forEach.call(document.querySelectorAll("details.cat"), function (det) {
+    var n = det.querySelectorAll(".chip.on").length, name = det.getAttribute("data-c");
+    if (name === "Mind" && draft.stress) n++;
+    if (name === "Food and drink" && draft.caffeine) n++;
+    var bd = det.querySelector(".badge"); bd.textContent = String(n); bd.classList.toggle("hide", !n);
+  });
+}
 function buildFormStatics() {
   var fb = $("formFaces");
   FACES.forEach(function (f) {
@@ -367,12 +553,21 @@ function buildFormStatics() {
   ISSUES.forEach(function (x) { ic.appendChild(el("button", { "class": "chip", type: "button", "data-k": x[0], "data-t": "issues", text: x[1] })); });
   var fg = $("factorGroups");
   FACTORS.forEach(function (g) {
-    fg.appendChild(el("div", { "class": "grp", text: g[0] }));
+    var c = CATS[g[0]];
+    var det = el("details", { "class": "cat", "data-c": g[0] });
+    det.style.setProperty("--cc", c[1]);
+    det.style.setProperty("--cb", c[2]);
+    det.appendChild(el("summary", {}, [el("span", { "class": "ic", text: c[0] }), el("span", { text: g[0] }), el("span", { "class": "sp" }), el("span", { "class": "badge hide" })]));
+    var body = el("div", { "class": "body" });
+    if (g[0] === "Mind") body.appendChild(segField("Stress level", "stressSeg", [[1, "Calm"], [2, "Mild"], [3, "Medium"], [4, "High"], [5, "Very high"]]));
+    if (g[0] === "Food and drink") body.appendChild(segField("Caffeine after noon", "cafSeg", [[0, "No"], [1, "Yes"]]));
     var wrap = el("div", { "class": "chips" });
     g[1].forEach(function (f) {
-      wrap.appendChild(el("button", { "class": "chip" + (f[2] ? " good" : ""), type: "button", "data-k": f[0], "data-t": "factors", text: f[1] }));
+      wrap.appendChild(el("button", { "class": "chip", type: "button", "data-k": f[0], "data-t": "factors", text: f[1] }));
     });
-    fg.appendChild(wrap);
+    body.appendChild(wrap);
+    det.appendChild(body);
+    fg.appendChild(det);
   });
 }
 
@@ -380,6 +575,11 @@ function fillForm() {
   var d = draft;
   $("sheetTitle").textContent = "Sleep for " + DAYS[parseYmd(d.date).getDay()] + ", " + MONTHS[parseYmd(d.date).getMonth()] + " " + parseYmd(d.date).getDate();
   $("sheetSub").textContent = "The night that ended this morning";
+  var cx = $("ctx"); cx.innerHTML = "";
+  var cph = phaseForNight(d.date);
+  if (cph) cx.appendChild(el("span", { text: "Cycle: " + CY[cph][0] }));
+  var mi = moonInfo(d.date);
+  cx.appendChild(el("span", { text: "Moon: " + mi.emoji + " " + mi.name }));
   Array.prototype.forEach.call($("formFaces").children, function (b) { b.classList.toggle("on", +b.getAttribute("data-q") === d.quality); });
   $("qErr").classList.add("hide");
   Array.prototype.forEach.call(document.querySelectorAll("#panel .chip"), function (b) {
@@ -388,24 +588,32 @@ function fillForm() {
   });
   $("bed").value = d.bed || "";
   $("wake").value = d.wake || "";
-  $("latency").value = (d.latency === undefined || d.latency === null) ? "" : String(d.latency);
-  $("awake").value = (d.awake === undefined || d.awake === null) ? "" : String(d.awake);
+  d.latency = latBucket(d.latency);
+  var wb = wakeBucket(d);
+  d.wakings = wb; d.awake = wb === null ? null : WAKE_MIN[wb];
+  setSeg("latSeg", d.latency);
+  setSeg("wakeSeg", wb);
   setSeg("melSeg", d.melatonin ? 1 : 0);
-  $("doseRow").classList.toggle("hide", !d.melatonin);
-  $("dose").value = d.dose ? String(d.dose) : "";
   setSeg("stressSeg", d.stress || 0);
-  $("cafVal").textContent = d.caffeine || 0;
-  $("alcVal").textContent = d.alcohol || 0;
+  setSeg("cafSeg", d.caffeine > 0 ? 1 : 0);
   $("notes").value = d.notes || "";
+  $("issueCard").classList.toggle("hide", !(d.quality && d.quality <= 3));
+  $("timesBox").open = !!(d.bed || d.wake);
+  $("noteBox").open = !!d.notes;
+  updateBadges();
+  Array.prototype.forEach.call(document.querySelectorAll("details.cat"), function (det) { det.open = !det.querySelector(".badge").classList.contains("hide"); });
   $("del").classList.toggle("hide", !data.entries[d.date]);
   updateHours();
 }
 function setSeg(id, v) {
-  Array.prototype.forEach.call($(id).children, function (b) { b.classList.toggle("on", +b.getAttribute("data-v") === v && v !== 0 || (id === "melSeg" && +b.getAttribute("data-v") === v)); });
+  var zeroOk = (id === "melSeg" || id === "cafSeg" || id === "wakeSeg");
+  Array.prototype.forEach.call($(id).children, function (b) {
+    var bv = +b.getAttribute("data-v");
+    b.classList.toggle("on", bv === v && (v !== 0 || zeroOk));
+  });
 }
-function numOrNull(id) { var v = $(id).value; return v === "" ? null : +v; }
 function updateHours() {
-  var m = calcMinutes($("bed").value, $("wake").value, numOrNull("latency"), numOrNull("awake"));
+  var m = calcMinutes($("bed").value, $("wake").value, draft ? draft.latency : null, draft ? draft.awake : null);
   $("hours").textContent = m === null ? "Add bed and wake times to see hours slept (optional)." : "About " + fmtHours(m) + " of sleep";
 }
 
@@ -415,7 +623,7 @@ function openSheet(ds) {
     draft = JSON.parse(JSON.stringify(ex));
     draft.issues = draft.issues || []; draft.factors = draft.factors || [];
   } else {
-    draft = { date: ds, issues: [], factors: [], melatonin: 0, caffeine: 0, alcohol: 0, stress: 0 };
+    draft = { date: ds, issues: [], factors: [], melatonin: 0, caffeine: 0, stress: 0 };
     var keys = Object.keys(data.entries).sort().reverse();
     for (var i = 0; i < keys.length; i++) {
       var p = data.entries[keys[i]];
@@ -434,9 +642,9 @@ function commitForm() {
   var d = draft;
   d.bed = $("bed").value || "";
   d.wake = $("wake").value || "";
-  d.latency = numOrNull("latency");
-  d.awake = numOrNull("awake");
-  d.dose = d.melatonin ? numOrNull("dose") : null;
+  if (d.latency === undefined) d.latency = null;
+  if (d.awake === undefined) d.awake = null;
+  delete d.dose;
   d.notes = $("notes").value.trim();
   var m = calcMinutes(d.bed, d.wake, d.latency, d.awake);
   if (m === null) delete d.minutes; else d.minutes = m;
@@ -444,15 +652,176 @@ function commitForm() {
   d.updated = Date.now();
   saveEntry(d);
   closeSheet();
-  toast("Saved");
+  showWhy(d);
 }
+
+
+// ---------- "why did I sleep badly" (written to the person using the app) ----------
+// [what happened, tip, base weight, problems it explains]
+var WHY = {
+  _caf: ["You had caffeine after noon. It can stay active in your body for many hours, which makes it harder to fall asleep and lighter once you do.", "Try moving your last caffeine a little earlier, even by an hour or two.", 3, ["fall", "restless", "night", "early"]],
+  _stress: ["You had a stressful day. When your mind and body stay on alert during the day, they often stay on alert at night, which makes it harder to drift off and stay asleep.", "A few slow breaths or a quick to-do list for tomorrow can quiet things down before bed.", 3, ["fall", "racing", "early", "night"]],
+  worry: ["You were worrying a lot. Worries tend to follow us into bed as racing thoughts.", "Try writing them down earlier in the evening so they have somewhere to go.", 2.5, ["racing", "fall", "early"]],
+  workstress: ["Work was stressful. That kind of stress often travels home and into the night.", "A short walk or a clear end-of-work ritual can help your mind switch off.", 2, ["racing", "fall"]],
+  conflict: ["You dealt with conflict or upsetting news. That keeps your mind and body keyed up for hours afterwards.", "Be kind to yourself and give yourself some calm time before bed.", 2, ["racing", "fall"]],
+  busy: ["Your mind was busy at bedtime. That is one of the most common reasons it takes longer to fall asleep.", "Try moving planning and screens out of the last hour before bed.", 2.5, ["racing", "fall"]],
+  event: ["You have a big event coming up. Looking ahead often makes sleep lighter or shorter.", "A calm, familiar routine the night before can help.", 1.5, ["early", "fall", "racing"]],
+  lateMeal: ["You ate close to bedtime. Digestion can make it harder to settle and can cause discomfort.", "Finishing eating 2 to 3 hours before bed can help.", 2, ["night", "restless", "fall"]],
+  heavy: ["You had a heavy or rich dinner. That can cause reflux and restless sleep.", "A lighter dinner earlier in the evening may help.", 2, ["night", "restless"]],
+  sugar: ["You had spicy or sugary food. That can cause heartburn or an energy spike that gets in the way of sleep.", "Try saving those for earlier in the day.", 1.5, ["restless", "fall", "night"]],
+  skipped: ["You skipped a meal. Being hungry or having low blood sugar can unsettle your sleep.", "Regular meals help keep the night steady.", 1, ["night", "early"]],
+  lateFluids: ["You had a lot to drink late in the day. That can mean bathroom trips that break up your sleep.", "Tapering fluids in the last couple of hours before bed can help.", 2, ["bathroom", "night"]],
+  exEvening: ["You exercised close to bedtime. Your heart rate and body temperature stay up for a while afterwards.", "Gentle movement in the evening and harder workouts earlier may suit you better.", 2, ["fall", "restless"]],
+  noEx: ["You did not get much movement yesterday. Active days are linked to deeper sleep.", "Even a 20 minute walk in daylight can help.", 1, ["unrefreshed", "restless"]],
+  nap: ["You took a nap. It can use up some of the sleepiness you need at night.", "If you nap, keeping it short and early in the afternoon works best.", 1.5, ["fall", "early"]],
+  screens: ["You were on screens close to bedtime. The light and the stimulation can delay melatonin and keep your brain awake.", "Try putting screens away 30 to 60 minutes before bed.", 2, ["fall", "racing"]],
+  workLate: ["You worked late. That leaves little time for your mind to switch off.", "Leaving a gap between work and bed can help.", 2, ["fall", "racing"]],
+  news: ["You watched TV or the news late. That can keep your mind and body keyed up.", "Something calm in the last hour, like a book or music, may help.", 1.5, ["fall", "racing"]],
+  lateBed: ["You went to bed later than usual. That shifts your body clock and can leave sleep lighter.", "A steady bedtime and wake time help most.", 1.5, ["unrefreshed", "early", "fall"]],
+  sick: ["You were feeling sick or congested. That disrupts breathing and sleep.", "Propping your head up or running a humidifier may help.", 2.5, ["night", "restless", "unrefreshed"]],
+  achy: ["You had aches or pain. That makes it hard to settle and can wake you.", "A warm shower before bed can ease tension.", 2.5, ["pain", "night", "restless"]],
+  meds: ["You started or changed a medication. Some medications affect sleep.", "A pharmacist or your doctor can tell you whether the timing matters.", 2, ["night", "dreams", "fall"]],
+  travel: ["You had travel or a schedule change. That throws your body clock off.", "Keeping your wake time steady and getting morning daylight helps.", 2, ["fall", "early", "unrefreshed"]],
+  warm: ["Your room was too warm. Heat is a common cause of waking at night.", "A cool, dark room is best for sleep.", 2.5, ["temp", "night", "restless"]],
+  noisy: ["It was noisy. Sound can break up your sleep even when you do not fully wake.", "A fan or white noise can help mask it.", 2.5, ["noise", "night"]],
+  bright: ["There was too much light in your room. Light lowers melatonin and makes sleep lighter.", "Blackout curtains or a sleep mask can help.", 2, ["noise", "early"]],
+  newbed: ["You slept somewhere different. A new bed or place often means lighter sleep for a night or two.", "It usually settles after a couple of nights.", 2, ["night", "restless", "fall"]]
+};
+var HELPERS = {
+  exMorning: "You exercised earlier in the day, which tends to deepen sleep.",
+  daylight: "You got outside in daylight, which helps set your body clock.",
+  bath: "You had a warm bath or shower. It helps your body cool down afterwards, which signals sleep.",
+  wind: "You had a wind-down routine, which tells your brain it is time to sleep."
+};
+var OPENERS = {
+  1: "I'm so sorry. That sounds like a really hard night, and I wish it had been kinder to you.",
+  2: "I'm sorry you did not sleep well last night. That is frustrating, and it is not your fault.",
+  3: "I'm sorry last night was not a restful one. A night like that can leave you feeling flat, and that is okay."
+};
+var ENCOURAGE = [
+  "One rough night does not undo anything. Your body is good at catching up, and tonight is a fresh start.",
+  "Please be gentle with yourself today. A tired day is hard enough without extra worry about tonight.",
+  "Try not to chase sleep tonight. Rest quietly, keep the lights low and let sleep find you.",
+  "You are already doing something helpful by tracking this. Every night you log makes the picture clearer.",
+  "Even if tonight is not perfect, resting in a calm, dark room still helps your body recover.",
+  "You have come through hard nights before and you will come through this one too. Tonight can be better.",
+  "Be kind to yourself today. A short walk in daylight and a calm evening can set tonight up well.",
+  "A bad night is just one night. Patterns matter more than any single evening, and you are building the picture to find yours."
+];
+
+function personalDiff(key, skipDate) {
+  var w = [], wo = [];
+  Object.keys(data.entries).forEach(function (k) {
+    var e = data.entries[k];
+    if (k === skipDate || !e.detailed || !e.quality) return;
+    (flagsFor(e)[key] ? w : wo).push(e.quality);
+  });
+  if (w.length < 3 || wo.length < 3) return null;
+  return { n: w.length, a: avg(w), b: avg(wo), diff: avg(w) - avg(wo) };
+}
+
+function whySleep(e) {
+  var f = flagsFor(e), issues = e.issues || [], reasons = [];
+  Object.keys(WHY).forEach(function (k) {
+    if (!f[k]) return;
+    var w = WHY[k], score = w[2], i;
+    for (i = 0; i < issues.length; i++) if (w[3].indexOf(issues[i]) >= 0) { score += 2; break; }
+    var pd = personalDiff(k, e.date), mine = null;
+    if (pd && pd.diff <= -0.4) { score += 3; mine = "In your own logs, nights like this average " + r1(pd.a) + " vs " + r1(pd.b) + " without it."; }
+    reasons.push({ label: LABELS[k], text: w[0], tip: w[1], mine: mine, score: score });
+  });
+  // cycle
+  var ph = phaseForNight(e.date), c1;
+  var cycleIssues = ["fall", "night", "early", "restless", "dreams", "temp", "unrefreshed"];
+  var bump = 0;
+  for (c1 = 0; c1 < issues.length; c1++) if (cycleIssues.indexOf(issues[c1]) >= 0) { bump = 1.5; break; }
+  if (ph === "pms") reasons.push({ label: "Your cycle: the week before your period", text: "You are in the week before your period, which is when sleep trouble is most common. Falling progesterone and shifts in body temperature can make sleep lighter and more broken. This is not something you did wrong.", tip: "It usually eases within a few days of your period starting.", mine: null, score: 3 + bump });
+  else if (ph === "period") reasons.push({ label: "Your cycle: your period", text: "You are on your period. Sleep is often lighter and more broken during these days, especially with cramps or discomfort.", tip: "Warmth, like a heating pad earlier in the evening, may help you settle.", mine: null, score: 2.5 + bump });
+  else if (ph === "luteal") reasons.push({ label: "Your cycle: second half", text: "You are in the second half of your cycle. Your body temperature runs a little higher then, which can make it harder to stay comfortably asleep.", tip: "A cooler room and lighter bedding can help.", mine: null, score: 1.5 + bump });
+  // moon
+  var mi = moonInfo(e.date);
+  if (mi.group === "full") {
+    var fm = [], rest = [];
+    Object.keys(data.entries).forEach(function (k) {
+      var x = data.entries[k]; if (!x.quality || k === e.date) return;
+      (moonInfo(k).group === "full" ? fm : rest).push(x.quality);
+    });
+    var mineM = null, sc = 1.5;
+    if (fm.length >= 4 && rest.length >= 4 && avg(fm) - avg(rest) <= -0.5) { mineM = "In your own logs, full moon weeks average " + r1(avg(fm)) + " vs " + r1(avg(rest)) + " otherwise."; sc = 4; }
+    reasons.push({ label: "The moon", text: "It was around the full moon. The research is mixed, but some people sleep a little lighter at this time of the month.", tip: "", mine: mineM, score: sc });
+  }
+  reasons.sort(function (a, b) { return b.score - a.score; });
+  return reasons.slice(0, 5);
+}
+
+function missingHelpers(e) {
+  var out = [];
+  Object.keys(HELPERS).forEach(function (k) {
+    if ((e.factors || []).indexOf(k) >= 0) return;
+    var pd = personalDiff(k, e.date);
+    if (pd && pd.diff >= 0.4) out.push("Your own logs show nights with \"" + LABELS[k].toLowerCase() + "\" average " + r1(pd.a) + " vs " + r1(pd.b) + " without it. It might be worth trying tonight.");
+  });
+  return out.slice(0, 1);
+}
+
+function showWhy(e) {
+  var body = $("whyBody"); body.innerHTML = "";
+  var face = FACES[e.quality - 1];
+  var d = parseYmd(e.date);
+  var poor = e.quality <= 3;
+  body.appendChild(el("div", { "class": "whyhead" }, [
+    el("div", { "class": "big", text: face[1] }),
+    el("div", {}, [el("h3", { text: poor ? "About last night" : "So glad you slept well" }),
+      el("div", { "class": "sub", style: "margin:2px 0 0", text: DAYS[d.getDay()] + ", " + MONTHS[d.getMonth()] + " " + d.getDate() })])
+  ]));
+  if (poor) {
+    body.appendChild(el("p", { "class": "lead", text: OPENERS[e.quality] }));
+    var reasons = whySleep(e), shown = reasons.length;
+    if (reasons.length) {
+      body.appendChild(el("p", { "class": "lead2", text: "Here are some things that may have played a part:" }));
+      reasons.forEach(function (r) {
+        var kids = [el("b", { text: r.label }), el("p", { text: r.text })];
+        if (r.mine) kids.push(el("span", { "class": "mine", text: r.mine }));
+        if (r.tip) kids.push(el("p", { "class": "tip", text: "Tip: " + r.tip }));
+        body.appendChild(el("div", { "class": "why" }, kids));
+      });
+    } else {
+      body.appendChild(el("p", { text: "Nothing you logged stands out as a clear cause. Some nights are just off, and that happens to everyone. It does not mean anything is wrong." }));
+      if (!e.detailed || ((e.factors || []).length === 0 && !e.stress)) body.appendChild(el("p", { "class": "sub", text: "If you fill in the \"What was yesterday like?\" section next time, I can look for causes with you." }));
+    }
+    missingHelpers(e).forEach(function (t) { body.appendChild(el("div", { "class": "why good" }, [el("b", { text: "Something that tends to help you" }), el("p", { text: t })])); });
+    var dn = d.getDate() + d.getMonth() * 3 + e.quality;
+    var enc = [el("b", { text: "For tonight" })];
+    if (e.quality === 1) enc.push(el("p", { text: "Today may feel heavy after a night like that. Rest where you can and do not expect too much of yourself." }));
+    enc.push(el("p", { text: ENCOURAGE[dn % ENCOURAGE.length] }));
+    enc.push(el("p", { text: ENCOURAGE[(dn + 3) % ENCOURAGE.length] }));
+    var tipSrc = null, ti;
+    for (ti = 0; ti < reasons.length; ti++) if (reasons[ti].tip) { tipSrc = reasons[ti].tip; break; }
+    if (tipSrc) { var tp = tipSrc.replace(/^Try /, ""); enc.push(el("p", { "class": "tip", text: "A small idea for tonight, if you feel like it: " + tp.charAt(0).toLowerCase() + tp.slice(1) })); }
+    enc.push(el("p", { text: "You have got this." }));
+    body.appendChild(el("div", { "class": "why good big" }, enc));
+    var now = new Date(), cutoff = ymd(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 14)), cnt = 0;
+    Object.keys(data.entries).forEach(function (k) { var x = data.entries[k]; if (k >= cutoff && x.quality && x.quality <= 2) cnt++; });
+    if (cnt >= 6) body.appendChild(el("p", { "class": "note", text: "You have had " + cnt + " poor nights in the last 2 weeks. That is worth talking to your doctor about. This diary is exactly what they like to see, and you can export it from Insights." }));
+  } else {
+    var helped = (e.factors || []).filter(function (k) { return HELPERS[k]; });
+    if (!helped.length) { toast("Saved. So glad you slept well!"); return; }
+    body.appendChild(el("p", { "class": "lead", text: "I'm so glad. Here is what probably helped:" }));
+    helped.forEach(function (k) { body.appendChild(el("div", { "class": "why good" }, [el("b", { text: LABELS[k] }), el("p", { text: HELPERS[k] })])); });
+    body.appendChild(el("p", { "class": "lead2", text: "Nicely done. It might be worth repeating tonight." }));
+  }
+  body.appendChild(el("p", { "class": "note", text: "These are likely contributors, not certainties. The more nights you log, the better I can spot what matters for you." }));
+  $("whySheet").classList.remove("hide");
+  document.body.classList.add("lock");
+  $("whyPanel").scrollTop = 0;
+}
+function closeWhy() { $("whySheet").classList.add("hide"); document.body.classList.remove("lock"); }
 
 // ---------- insights ----------
 function flagsFor(e) {
   var f = {};
   (e.factors || []).forEach(function (k) { f[k] = 1; });
   if (e.caffeine > 0) f._caf = 1;
-  if (e.alcohol > 0) f._alc = 1;
   if (e.stress >= 4) f._stress = 1;
   return f;
 }
@@ -547,6 +916,69 @@ function renderInsights() {
     ]));
   }
 
+
+  // cycle phase
+  var cyc = el("div", { "class": "card" }, [el("h2", { text: "Cycle phase" })]);
+  var cb = {}; var cn = 0;
+  all.forEach(function (e) {
+    var ph = phaseForNight(e.date);
+    if (!ph) return;
+    var g = groupPhase(ph);
+    (cb[g] = cb[g] || []).push(e.quality); cn++;
+  });
+  if (!cycle.periods.length) {
+    cyc.appendChild(el("p", { "class": "sub", text: "Cycle data has not loaded yet. Open the app with a connection and it will appear." }));
+  } else if (cn < 10) {
+    cyc.appendChild(el("p", { "class": "sub", text: "Needs about 4 weeks of nights to compare phases (" + cn + " so far)." }));
+  } else {
+    cyc.appendChild(el("p", { "class": "sub", text: "Average sleep rating by phase, phases taken from the cycle site" }));
+    var cres = [];
+    CY_ORDER.forEach(function (k) {
+      var v = cb[k]; if (!v) return;
+      cres.push({ k: k, n: v.length, a: avg(v) });
+      var bar = el("div"); bar.style.width = (avg(v) / 5 * 100) + "%"; bar.style.background = CY[k][1];
+      cyc.appendChild(el("div", { "class": "ins", style: "display:block" }, [
+        el("div", { "class": "row" }, [el("span", { text: CY[k][0] }), el("b", { text: r1(avg(v)) + "  (" + v.length + (v.length === 1 ? " night)" : " nights)") })]),
+        el("div", { "class": "mbar" }, [bar])
+      ]));
+    });
+    var ok = cres.filter(function (r) { return r.n >= 3; });
+    if (ok.length >= 2) {
+      ok.sort(function (x, y) { return x.a - y.a; });
+      var lo = ok[0], hi = ok[ok.length - 1];
+      if (hi.a - lo.a >= 0.5) cyc.appendChild(el("p", { "class": "note", text: "Lowest so far: " + CY[lo.k][0] + " (" + r1(lo.a) + "). Highest: " + CY[hi.k][0] + " (" + r1(hi.a) + ")." }));
+      else cyc.appendChild(el("p", { "class": "note", text: "No clear difference between phases so far." }));
+    }
+    cyc.appendChild(el("p", { "class": "note", text: "Many women sleep worse in the week before a period and during it. Each phase needs a few cycles of data to be trusted." }));
+  }
+  box.appendChild(cyc);
+
+  // moon phase
+  var moon = el("div", { "class": "card" }, [el("h2", { text: "Moon phase" })]);
+  var mb = {};
+  all.forEach(function (e) { var g = moonInfo(e.date).group; (mb[g] = mb[g] || []).push(e.quality); });
+  if (all.length < 14) {
+    moon.appendChild(el("p", { "class": "sub", text: "Needs at least 2 weeks of nights (" + all.length + " so far). Real patterns take about 3 months to show." }));
+  } else {
+    moon.appendChild(el("p", { "class": "sub", text: "Average sleep rating by part of the lunar month" }));
+    MOON_ORDER.forEach(function (k) {
+      var v = mb[k]; if (!v) return;
+      var bar2 = el("div"); bar2.style.width = (avg(v) / 5 * 100) + "%"; bar2.style.background = "#8a8fd6";
+      moon.appendChild(el("div", { "class": "ins", style: "display:block" }, [
+        el("div", { "class": "row" }, [el("span", { text: MOON_GROUPS[k] }), el("b", { text: r1(avg(v)) + "  (" + v.length + (v.length === 1 ? " night)" : " nights)") })]),
+        el("div", { "class": "mbar" }, [bar2])
+      ]));
+    });
+    var fm = mb.full || [], rest = [];
+    all.forEach(function (e) { if (moonInfo(e.date).group !== "full") rest.push(e.quality); });
+    if (fm.length >= 4 && rest.length >= 4) {
+      var dd = avg(fm) - avg(rest);
+      moon.appendChild(el("p", { "class": "note", text: "Full moon week averages " + r1(avg(fm)) + " vs " + r1(avg(rest)) + " the rest of the month (" + (dd > 0 ? "+" : "") + r1(dd) + ")." }));
+    }
+    moon.appendChild(el("p", { "class": "note", text: "Research is mixed. One lab study found less deep sleep around the full moon, while larger studies found almost no effect. Treat small gaps as noise. Your cycle can also line up with the moon for a few months and fake a moon effect, so trust the cycle card first." }));
+  }
+  box.appendChild(moon);
+
   // consistency
   var beds = [], wakes = [];
   all.forEach(function (e) {
@@ -569,15 +1001,16 @@ function renderInsights() {
 }
 
 function exportCsv() {
-  var cols = ["date","quality","minutes_asleep","bed","wake","minutes_to_fall_asleep","minutes_awake_at_night","melatonin","melatonin_mg","stress","caffeine_after_noon","alcohol","problems","factors","notes"];
+  var cols = ["date","quality","minutes_asleep","bed","wake","minutes_to_fall_asleep","minutes_awake_at_night","melatonin","stress","caffeine_after_noon","problems","factors","notes","cycle_phase","moon_phase"];
   function q(v) { var s = (v === undefined || v === null) ? "" : String(v); return "\"" + s.replace(/"/g, "\"\"") + "\""; }
   var rows = [cols.join(",")];
   Object.keys(data.entries).sort().forEach(function (k) {
     var e = data.entries[k];
-    rows.push([e.date, e.quality, e.minutes, e.bed, e.wake, e.latency, e.awake, e.melatonin ? "yes" : "no", e.dose, e.stress,
-      e.caffeine, e.alcohol,
+    rows.push([e.date, e.quality, e.minutes, e.bed, e.wake, e.latency, e.awake, e.melatonin ? "yes" : "no", e.stress,
+      e.caffeine ? "yes" : "no",
       (e.issues || []).map(function (x) { return ISSUE_LABELS[x] || x; }).join("; "),
-      (e.factors || []).map(function (x) { return LABELS[x] || x; }).join("; "), e.notes].map(q).join(","));
+      (e.factors || []).map(function (x) { return LABELS[x] || x; }).join("; "), e.notes,
+      (function () { var ph = phaseForNight(e.date); return ph ? CY[ph][0] : ""; })(), moonInfo(e.date).name].map(q).join(","));
   });
   var blob = new Blob([rows.join("\n")], { type: "text/csv" });
   var a = document.createElement("a");
@@ -666,7 +1099,7 @@ function bind() {
     e.quality = +b.getAttribute("data-q");
     e.updated = Date.now();
     saveEntry(e);
-    toast("Logged");
+    toast(e.quality <= 3 && !e.detailed ? "Logged. Add details to see why." : "Logged");
   });
   $("quickMore").onclick = function () { openSheet(todayStr()); };
   $("grid").addEventListener("click", function (ev) {
@@ -683,6 +1116,7 @@ function bind() {
     var b = ev.target.closest(".face"); if (!b) return;
     draft.quality = +b.getAttribute("data-q");
     Array.prototype.forEach.call($("formFaces").children, function (x) { x.classList.toggle("on", x === b); });
+    $("issueCard").classList.toggle("hide", draft.quality > 3);
     $("qErr").classList.add("hide");
   });
   $("panel").addEventListener("click", function (ev) {
@@ -694,18 +1128,16 @@ function bind() {
       c.classList.toggle("on");
       return;
     }
-    var s = ev.target.closest(".stepper button");
-    if (s) {
-      var key = s.getAttribute("data-s");
-      draft[key] = Math.max(0, Math.min(9, (draft[key] || 0) + (+s.getAttribute("data-d"))));
-      $(key === "caffeine" ? "cafVal" : "alcVal").textContent = draft[key];
-    }
+  });
+  $("cafSeg").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button"); if (!b) return;
+    draft.caffeine = +b.getAttribute("data-v");
+    setSeg("cafSeg", draft.caffeine);
   });
   $("melSeg").addEventListener("click", function (ev) {
     var b = ev.target.closest("button"); if (!b) return;
     draft.melatonin = +b.getAttribute("data-v");
     setSeg("melSeg", draft.melatonin);
-    $("doseRow").classList.toggle("hide", !draft.melatonin);
   });
   $("stressSeg").addEventListener("click", function (ev) {
     var b = ev.target.closest("button"); if (!b) return;
@@ -713,23 +1145,41 @@ function bind() {
     draft.stress = draft.stress === v ? 0 : v;
     setSeg("stressSeg", draft.stress);
   });
-  ["bed", "wake", "latency", "awake"].forEach(function (id) { $(id).addEventListener("input", updateHours); $(id).addEventListener("change", updateHours); });
+  ["bed", "wake"].forEach(function (id) { $(id).addEventListener("input", updateHours); $(id).addEventListener("change", updateHours); });
+  $("latSeg").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button"); if (!b) return;
+    var v = +b.getAttribute("data-v");
+    draft.latency = draft.latency === v ? null : v;
+    setSeg("latSeg", draft.latency); updateHours();
+  });
+  $("wakeSeg").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button"); if (!b) return;
+    var v = +b.getAttribute("data-v");
+    draft.wakings = draft.wakings === v ? null : v;
+    draft.awake = draft.wakings === null ? null : WAKE_MIN[draft.wakings];
+    setSeg("wakeSeg", draft.wakings); updateHours();
+  });
+  $("panel").addEventListener("click", updateBadges);
   $("save").onclick = commitForm;
+  $("whyDone").onclick = closeWhy;
+  $("whySheet").addEventListener("click", function (ev) { if (ev.target === $("whySheet")) closeWhy(); });
   $("cancel").onclick = closeSheet;
   $("close").onclick = closeSheet;
   $("del").onclick = function () {
     if (window.confirm("Delete this night?")) { var d = draft.date; closeSheet(); deleteEntry(d); toast("Deleted"); }
   };
   $("sheet").addEventListener("click", function (ev) { if (ev.target === $("sheet")) closeSheet(); });
-  document.addEventListener("visibilitychange", function () { if (!document.hidden) sync(); });
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) { sync(); fetchCycle(); } });
 }
 
 load();
+loadCycle();
 buildFormStatics();
 bind();
 renderAll();
 setStatus(SCRIPT_URL ? "busy" : "local");
 sync();
+fetchCycle();
 })();
 </script>
 </body>

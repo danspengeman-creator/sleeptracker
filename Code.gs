@@ -8,7 +8,7 @@ var KEY = "PICK-A-LONG-RANDOM-PHRASE";
 var TAB = "SleepData";
 
 var HEAD = ["date", "quality", "minutes_asleep", "bed", "wake", "minutes_to_fall_asleep", "minutes_awake_at_night",
-  "melatonin", "melatonin_mg", "stress", "caffeine_after_noon", "alcohol", "problems", "factors", "notes", "updated", "json"];
+  "melatonin", "stress", "caffeine_after_noon", "problems", "factors", "notes", "updated", "json"];
 var JSON_COL = HEAD.length; // json is the last column
 
 function out_(o) {
@@ -46,7 +46,7 @@ function rowFor_(e) {
   return [e.date, e.quality || "", typeof e.minutes === "number" ? e.minutes : "", e.bed || "", e.wake || "",
     e.latency === null || e.latency === undefined ? "" : e.latency,
     e.awake === null || e.awake === undefined ? "" : e.awake,
-    e.melatonin ? "yes" : "no", e.dose || "", e.stress || "", e.caffeine || 0, e.alcohol || 0,
+    e.melatonin ? "yes" : "no", e.stress || "", e.caffeine ? "yes" : "no",
     (e.issues || []).join("; "), (e.factors || []).join("; "), e.notes || "", e.updated || "", JSON.stringify(e)];
 }
 
