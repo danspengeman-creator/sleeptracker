@@ -43,9 +43,9 @@ main{max-width:620px;margin:0 auto;padding:14px}
 .cell span{position:absolute;top:5px;left:7px;font-size:12px;opacity:.75}
 .cell i{position:absolute;bottom:8px;right:6px;font-style:normal;font-size:13px}
 .cell .st{position:absolute;left:0;right:0;bottom:0;height:5px}
-.cell .mm{position:absolute;top:3px;right:4px;font-size:11px;line-height:1}
+.cell .mm{position:absolute;bottom:5px;left:6px;font-size:15px;line-height:1}
 .cell.empty{background:none;pointer-events:none}
-.cell.future{opacity:.35;pointer-events:none}
+.cell.future{opacity:.6;pointer-events:none}
 .cell.q1{background:var(--q1)}.cell.q2{background:var(--q2)}.cell.q3{background:var(--q3)}.cell.q4{background:var(--q4)}.cell.q5{background:var(--q5)}
 .cell.today{outline:3px solid var(--deep);outline-offset:1px}
 .cell em{font-style:normal;font-weight:700;font-size:17px;margin:auto}
@@ -174,11 +174,11 @@ details.cat .field{margin-bottom:12px}
         <span><b style="background:var(--q3)"></b>Okay</span>
         <span><b style="background:var(--q4)"></b>Good</span>
         <span><b style="background:var(--q5)"></b>Great</span>
-        <span>&#9790; melatonin</span>
       </div>
       <div class="legend l2" id="legend2"></div>
+      <p class="note" id="moonNext" style="margin-top:8px"></p>
       <div class="stats" id="monthStats"></div>
-      <p class="note">Each day shows the night that ended that morning. The moon mark shows full and new moons. Tap any day to log or edit it and to see where you were in your cycle that night.</p>
+      <p class="note">Each day shows the night that ended that morning. Moon marks show the dates of full and new moons, including upcoming ones. Tap any past day to log or edit it and to see where you were in your cycle that night.</p>
     </div>
   </section>
 
@@ -312,9 +312,9 @@ function toMin(t) { if (!t) return null; var p = t.split(":"); return (+p[0]) * 
 var SYNODIC = 29.53058867;
 var MOON_REF = Date.UTC(2000, 0, 6, 18, 14, 0);
 var MOON_NAMES = [
-  [1.85, "New Moon", "🌑"], [7.38, "Waxing Crescent", "🌒"], [9.22, "First Quarter", "🌓"],
-  [14.77, "Waxing Gibbous", "🌔"], [16.61, "Full Moon", "🌕"], [22.15, "Waning Gibbous", "🌖"],
-  [23.99, "Last Quarter", "🌗"], [27.68, "Waning Crescent", "🌘"], [99, "New Moon", "🌑"]
+  [1.85, "New Moon", "\uD83C\uDF11"], [5.54, "Waxing Crescent", "\uD83C\uDF12"], [9.23, "First Quarter", "\uD83C\uDF13"],
+  [12.92, "Waxing Gibbous", "\uD83C\uDF14"], [16.61, "Full Moon", "\uD83C\uDF15"], [20.3, "Waning Gibbous", "\uD83C\uDF16"],
+  [23.99, "Last Quarter", "\uD83C\uDF17"], [27.68, "Waning Crescent", "\uD83C\uDF18"], [99, "New Moon", "\uD83C\uDF11"]
 ];
 var MOON_GROUPS = { "new": "New moon week", "waxing": "Waxing (growing)", "full": "Full moon week", "waning": "Waning (shrinking)" };
 var MOON_ORDER = ["new", "waxing", "full", "waning"];
@@ -324,12 +324,48 @@ function moonGroup(age) {
   if (age < 18.45) return "full";
   return "waning";
 }
+// true new and full moon times (Meeus, Astronomical Algorithms ch. 49). k is a whole number for a new moon and ends in .5 for a full moon.
+var phaseCache = {};
+function moonPhaseTime(k) {
+  if (phaseCache[k] !== undefined) return phaseCache[k];
+  var T = k / 1236.85, T2 = T * T, T3 = T2 * T, T4 = T3 * T, R = Math.PI / 180;
+  var jde = 2451550.09766 + 29.530588861 * k + 0.00015437 * T2 - 0.00000015 * T3 + 0.00000000073 * T4;
+  var E = 1 - 0.002516 * T - 0.0000074 * T2;
+  var M = (2.5534 + 29.1053567 * k - 0.0000014 * T2 - 0.00000011 * T3) * R;
+  var Mp = (201.5643 + 385.81693528 * k + 0.0107582 * T2 + 0.00001238 * T3 - 0.000000058 * T4) * R;
+  var F = (160.7108 + 390.67050284 * k - 0.0016118 * T2 - 0.00000227 * T3 + 0.000000011 * T4) * R;
+  var O = (124.7746 - 1.56375588 * k + 0.0020672 * T2 + 0.00000215 * T3) * R;
+  var full = Math.abs(k % 1) > 0.25;
+  var c = full ? [-0.40614, 0.17302, 0.01614, 0.01043, 0.00734, -0.00515, 0.00209] : [-0.4072, 0.17241, 0.01608, 0.01039, 0.00739, -0.00514, 0.00208];
+  var sn = Math.sin;
+  jde += c[0] * sn(Mp) + c[1] * E * sn(M) + c[2] * sn(2 * Mp) + c[3] * sn(2 * F) + c[4] * E * sn(Mp - M) + c[5] * E * sn(Mp + M) + c[6] * E * E * sn(2 * M)
+    - 0.00111 * sn(Mp - 2 * F) - 0.00057 * sn(Mp + 2 * F) + 0.00056 * E * sn(2 * Mp + M) - 0.00042 * sn(3 * Mp)
+    + 0.00042 * E * sn(M + 2 * F) + 0.00038 * E * sn(M - 2 * F) - 0.00024 * E * sn(2 * Mp - M) - 0.00017 * sn(O) - 0.00007 * sn(Mp + 2 * M);
+  var ms = (jde - 2440587.5) * 86400000 - 69000; // JDE to UT, delta T about 69 s
+  phaseCache[k] = ms;
+  return ms;
+}
+function moonAgeAt(t) {
+  var k = Math.floor((t - MOON_REF) / (SYNODIC * 86400000));
+  var prev = moonPhaseTime(k), next = moonPhaseTime(k + 1);
+  while (t < prev) { k--; next = prev; prev = moonPhaseTime(k); }
+  while (t >= next) { k++; prev = next; next = moonPhaseTime(k + 1); }
+  return (t - prev) / (next - prev) * SYNODIC;
+}
+// all new and full moons between two times (ms)
+function moonEvents(startMs, endMs) {
+  var k0 = Math.floor((startMs - MOON_REF) / (SYNODIC * 86400000)) - 1, out = [], k;
+  for (k = k0; k <= k0 + Math.ceil((endMs - startMs) / (SYNODIC * 86400000)) + 3; k++) {
+    var tn = moonPhaseTime(k), tf = moonPhaseTime(k + 0.5);
+    if (tn >= startMs && tn < endMs) out.push({ t: tn, type: "new" });
+    if (tf >= startMs && tf < endMs) out.push({ t: tf, type: "full" });
+  }
+  return out.sort(function (a, b) { return a.t - b.t; });
+}
 // the night that ends on morning ds started at about 10pm the day before
 function moonInfo(ds) {
   var p = ds.split("-");
-  var d = new Date(+p[0], +p[1] - 1, +p[2] - 1, 22, 0, 0);
-  var days = (d.getTime() - MOON_REF) / 86400000;
-  var age = ((days % SYNODIC) + SYNODIC) % SYNODIC;
+  var age = moonAgeAt(new Date(+p[0], +p[1] - 1, +p[2] - 1, 22, 0, 0).getTime());
   var i = 0;
   while (age >= MOON_NAMES[i][0]) i++;
   return { age: age, name: MOON_NAMES[i][1], emoji: MOON_NAMES[i][2], group: moonGroup(age) };
@@ -459,12 +495,15 @@ function renderCal() {
   var y = view.getFullYear(), m = view.getMonth();
   $("monthLabel").textContent = MONTHS[m] + " " + y;
   var now = new Date();
-  $("next").disabled = (y === now.getFullYear() && m === now.getMonth()) || (y > now.getFullYear());
+  var ahead = (y - now.getFullYear()) * 12 + (m - now.getMonth());
+  $("next").disabled = ahead >= 12;
   var grid = $("grid"); grid.innerHTML = "";
   var first = new Date(y, m, 1).getDay();
   var days = new Date(y, m + 1, 0).getDate();
   var t = todayStr();
   var i;
+  var evMap = {};
+  moonEvents(new Date(y, m, 1).getTime(), new Date(y, m + 1, 1).getTime()).forEach(function (ev) { evMap[ymd(new Date(ev.t))] = ev.type; });
   for (i = 0; i < first; i++) grid.appendChild(el("div", { "class": "cell empty" }));
   var qs = [], poor = 0;
   for (i = 1; i <= days; i++) {
@@ -476,15 +515,17 @@ function renderCal() {
     if (ds > t) cls += " future";
     var b = el("button", { "class": cls, type: "button", "data-d": ds, "aria-label": MONTHS[m] + " " + i }, [el("span", { text: String(i) })]);
     if (e && e.melatonin) b.appendChild(el("i", { text: "☾" }));
-    if (ds <= t) {
-      var mo = moonInfo(ds);
-      if (mo.name === "Full Moon" || mo.name === "New Moon") b.appendChild(el("div", { "class": "mm", text: mo.emoji }));
-    }
+    if (evMap[ds]) b.appendChild(el("div", { "class": "mm", text: evMap[ds] === "full" ? "\uD83C\uDF15" : "\uD83C\uDF11" }));
     grid.appendChild(b);
   }
   var lg = $("legend2"); lg.innerHTML = "";
-  lg.appendChild(el("span", { text: "\uD83C\uDF15 full moon \uD83C\uDF11 new moon" }));
+  ["\u263E Melatonin", "\uD83C\uDF15 Full Moon", "\uD83C\uDF11 New Moon"].forEach(function (t) { lg.appendChild(el("span", { text: t })); });
+  var nx = moonEvents(Date.now(), Date.now() + 40 * 86400000), nf = null, nn = null;
+  nx.forEach(function (ev) { if (ev.type === "full" && !nf) nf = ev; if (ev.type === "new" && !nn) nn = ev; });
+  var fmt = function (ev) { var d2 = new Date(ev.t); return DAYS[d2.getDay()].slice(0, 3) + ", " + MONTHS[d2.getMonth()].slice(0, 3) + " " + d2.getDate(); };
+  $("moonNext").textContent = (nf && nn) ? (nf.t < nn.t ? "Next full moon: " + fmt(nf) + "  \u00B7  Next new moon: " + fmt(nn) : "Next new moon: " + fmt(nn) + "  \u00B7  Next full moon: " + fmt(nf)) : "";
   var st = $("monthStats"); st.innerHTML = "";
+  st.style.display = ahead > 0 ? "none" : "";
   [[String(qs.length), "nights logged"], [qs.length ? String(r1(avg(qs))) : "-", "average (1 to 5)"], [String(poor), "poor nights"]].forEach(function (s) {
     st.appendChild(el("div", { "class": "stat" }, [el("b", { text: s[0] }), el("span", { text: s[1] })]));
   });
