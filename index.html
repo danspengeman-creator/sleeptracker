@@ -134,6 +134,9 @@ details.cat .field{margin-bottom:12px}
 .why .mine{font-size:13px;color:#7a3a00;background:#fdf0dd;border-radius:8px;padding:3px 8px;display:inline-block;margin-top:3px}
 .why.good{border-left-color:var(--q5)}
 .why.big{background:#e9f6ef;border-radius:12px;padding:10px 12px;border-left-width:6px}
+.dots{display:flex;gap:5px;flex-wrap:wrap;margin:7px 0 6px}
+.dot{width:15px;height:15px;border-radius:50%;display:inline-block}
+.rp small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px}
 .lead{font-size:16px;margin:4px 0 10px}
 .lead2{font-size:15px;font-weight:600;margin:12px 0 4px}
 .whyhead{display:flex;gap:12px;align-items:center;margin-bottom:6px}
@@ -273,8 +276,8 @@ var FACTORS = [
   ["Mind",[["worry","Worrying a lot"],["workstress","Stressful work"],["conflict","Conflict or bad news"],["busy","Busy mind at bedtime"],["event","Big event coming up"]]],
   ["Food and drink",[["lateMeal","Ate within 3 hours of bed"],["heavy","Heavy or rich dinner"],["sugar","Spicy or sugary food"],["skipped","Skipped a meal"],["lateFluids","Lots of fluids late"]]],
   ["Activity",[["exMorning","Exercised earlier in the day",1],["exEvening","Exercised close to bedtime"],["noEx","No exercise"],["nap","Took a nap"],["daylight","Got outside in daylight",1]]],
-  ["Evening",[["screens","Screens close to bedtime"],["workLate","Worked late"],["news","TV or news late"],["bath","Warm bath or shower",1],["wind","Wind-down routine",1],["lateBed","Went to bed late"]]],
-  ["Body",[["sick","Sick or congested"],["achy","Aches or pain"],["meds","New or changed medication"],["travel","Travel or schedule change"]]],
+  ["Evening",[["screens","Phone use close to bedtime"],["workLate","Worked late"],["news","TV late at night"],["bath","Warm bath or shower",1],["wind","Wind-down routine",1],["lateBed","Went to bed late"]]],
+  ["Body",[["sick","Sick or congested"],["achy","Aches or pain"],["headache","Headache"],["meds","New or changed medication"],["travel","Travel or schedule change"]]],
   ["Bedroom",[["warm","Room too warm"],["noisy","Noisy"],["bright","Too much light"],["newbed","Different bed or place"]]]
 ];
 var LABELS = { _caf: "Caffeine after noon", _stress: "High stress day" };
@@ -666,9 +669,10 @@ var WHY = {
   exEvening: ["You exercised close to bedtime. Your heart rate and body temperature stay up for a while afterwards.", "Gentle movement in the evening and harder workouts earlier may suit you better.", 2, ["fall", "restless"]],
   noEx: ["You did not get much movement yesterday. Active days are linked to deeper sleep.", "Even a 20 minute walk in daylight can help.", 1, ["unrefreshed", "restless"]],
   nap: ["You took a nap. It can use up some of the sleepiness you need at night.", "If you nap, keeping it short and early in the afternoon works best.", 1.5, ["fall", "early"]],
-  screens: ["You were on screens close to bedtime. The light and the stimulation can delay melatonin and keep your brain awake.", "Try putting screens away 30 to 60 minutes before bed.", 2, ["fall", "racing"]],
+  screens: ["You were on your phone close to bedtime. The light and the stimulation can delay melatonin and keep your brain awake.", "Try putting your phone away 30 to 60 minutes before bed.", 2, ["fall", "racing"]],
   workLate: ["You worked late. That leaves little time for your mind to switch off.", "Leaving a gap between work and bed can help.", 2, ["fall", "racing"]],
-  news: ["You watched TV or the news late. That can keep your mind and body keyed up.", "Something calm in the last hour, like a book or music, may help.", 1.5, ["fall", "racing"]],
+  news: ["You watched TV late. That can keep your mind and body keyed up and the light can delay melatonin.", "Something calm in the last hour, like a book or music, may help.", 1.5, ["fall", "racing"]],
+  headache: ["You had a headache. Pain makes it hard to settle and can wake you.", "A dark, quiet room and a glass of water can help. If headaches are frequent, mention them to your doctor.", 2.5, ["pain", "night", "restless", "fall"]],
   lateBed: ["You went to bed later than usual. That shifts your body clock and can leave sleep lighter.", "A steady bedtime and wake time help most.", 1.5, ["unrefreshed", "early", "fall"]],
   sick: ["You were feeling sick or congested. That disrupts breathing and sleep.", "Propping your head up or running a humidifier may help.", 2.5, ["night", "restless", "unrefreshed"]],
   achy: ["You had aches or pain. That makes it hard to settle and can wake you.", "A warm shower before bed can ease tension.", 2.5, ["pain", "night", "restless"]],
@@ -687,8 +691,7 @@ var HELPERS = {
 };
 var OPENERS = {
   1: "I'm so sorry. That sounds like a really hard night, and I wish it had been kinder to you.",
-  2: "I'm sorry you did not sleep well last night. That is frustrating, and it is not your fault.",
-  3: "I'm sorry last night was not a restful one. A night like that can leave you feeling flat, and that is okay."
+  2: "I'm sorry you did not sleep well last night. That is frustrating, and it is not your fault."
 };
 var ENCOURAGE = [
   "One rough night does not undo anything. Your body is good at catching up, and tonight is a fresh start.",
@@ -761,16 +764,17 @@ function showWhy(e) {
   var face = FACES[e.quality - 1];
   var d = parseYmd(e.date);
   var poor = e.quality <= 3;
+  if (e.quality === 3 && !whySleep(e).length) { toast("Saved"); return; }
   body.appendChild(el("div", { "class": "whyhead" }, [
     el("div", { "class": "big", text: face[1] }),
     el("div", {}, [el("h3", { text: poor ? "About last night" : "So glad you slept well" }),
       el("div", { "class": "sub", style: "margin:2px 0 0", text: DAYS[d.getDay()] + ", " + MONTHS[d.getMonth()] + " " + d.getDate() })])
   ]));
   if (poor) {
-    body.appendChild(el("p", { "class": "lead", text: OPENERS[e.quality] }));
+    body.appendChild(el("p", { "class": "lead", text: OPENERS[e.quality] || "Last night was okay, though not your best." }));
     var reasons = whySleep(e), shown = reasons.length;
     if (reasons.length) {
-      body.appendChild(el("p", { "class": "lead2", text: "Here are some things that may have played a part:" }));
+      body.appendChild(el("p", { "class": "lead2", text: e.quality === 3 ? "Here is what may have kept it from being a great one:" : "Here are some things that may have played a part:" }));
       reasons.forEach(function (r) {
         var kids = [el("b", { text: r.label }), el("p", { text: r.text })];
         if (r.mine) kids.push(el("span", { "class": "mine", text: r.mine }));
@@ -786,11 +790,11 @@ function showWhy(e) {
     var enc = [el("b", { text: "For tonight" })];
     if (e.quality === 1) enc.push(el("p", { text: "Today may feel heavy after a night like that. Rest where you can and do not expect too much of yourself." }));
     enc.push(el("p", { text: ENCOURAGE[dn % ENCOURAGE.length] }));
-    enc.push(el("p", { text: ENCOURAGE[(dn + 3) % ENCOURAGE.length] }));
+    if (e.quality <= 2) enc.push(el("p", { text: ENCOURAGE[(dn + 3) % ENCOURAGE.length] }));
     var tipSrc = null, ti;
     for (ti = 0; ti < reasons.length; ti++) if (reasons[ti].tip) { tipSrc = reasons[ti].tip; break; }
     if (tipSrc) { var tp = tipSrc.replace(/^Try /, ""); enc.push(el("p", { "class": "tip", text: "A small idea for tonight, if you feel like it: " + tp.charAt(0).toLowerCase() + tp.slice(1) })); }
-    enc.push(el("p", { text: "You have got this." }));
+    if (e.quality <= 2) enc.push(el("p", { text: "You have got this." }));
     body.appendChild(el("div", { "class": "why good big" }, enc));
     var now = new Date(), cutoff = ymd(new Date(now.getFullYear(), now.getMonth(), now.getDate() - 14)), cnt = 0;
     Object.keys(data.entries).forEach(function (k) { var x = data.entries[k]; if (k >= cutoff && x.quality && x.quality <= 2) cnt++; });
@@ -864,6 +868,51 @@ function renderInsights() {
     });
     box.appendChild(pc);
   }
+
+  // repeating patterns
+  var rp = el("div", { "class": "card rp" }, [el("h2", { text: "Repeating patterns" }), el("p", { "class": "sub", text: "Things you logged more than once, and how sleep went that night" })]);
+  var detAll = all.filter(function (e) { return e.detailed; });
+  if (detAll.length < 6) {
+    rp.appendChild(el("p", { "class": "sub", text: "Fill in what yesterday was like on at least 6 nights (" + detAll.length + " so far) and repeating patterns will show up here." }));
+  } else {
+    var isRough = function (e) { return e.quality <= 3; };
+    var rrows = [];
+    Object.keys(LABELS).forEach(function (k) {
+      var w = detAll.filter(function (e) { return flagsFor(e)[k]; });
+      var wo = detAll.filter(function (e) { return !flagsFor(e)[k]; });
+      if (w.length < 3 || wo.length < 3) return;
+      var rate = w.filter(isRough).length / w.length, base = wo.filter(isRough).length / wo.length;
+      rrows.push({ k: k, list: w, n: w.length, rough: w.filter(isRough).length, rate: rate, base: base, lift: rate - base });
+    });
+    var rnow = new Date();
+    var c14 = ymd(new Date(rnow.getFullYear(), rnow.getMonth(), rnow.getDate() - 14));
+    var c28 = ymd(new Date(rnow.getFullYear(), rnow.getMonth(), rnow.getDate() - 28));
+    var addRP = function (r, cls, title, withTip) {
+      var recent = r.list.filter(function (e) { return e.date >= c14; }).length;
+      var prev = r.list.filter(function (e) { return e.date >= c28 && e.date < c14; }).length;
+      var dots = el("div", { "class": "dots" });
+      r.list.slice(-12).forEach(function (e) {
+        var dt = el("span", { "class": "dot", title: e.date });
+        dt.style.background = "var(--q" + e.quality + ")";
+        dots.appendChild(dt);
+      });
+      var kids = [
+        el("div", { "class": "row" }, [el("b", { text: LABELS[r.k] }), el("span", { "class": "pill " + cls, text: r.rough + " of " + r.n + " rough" })]),
+        el("small", { text: "Okay or worse sleep after " + Math.round(r.rate * 100) + "% of these nights, vs " + Math.round(r.base * 100) + "% on other nights" }),
+        dots
+      ];
+      if (recent !== prev) kids.push(el("small", { text: recent > prev ? "Showing up more often lately (" + recent + " in the last 2 weeks vs " + prev + " before that)" : "Happening less often lately (" + recent + " in the last 2 weeks vs " + prev + " before that)" }));
+      if (withTip && WHY[r.k]) kids.push(el("small", { text: "Tip: " + WHY[r.k][1] }));
+      rp.appendChild(el("div", { "class": "ins", style: "display:block" }, kids));
+    };
+    var rbad = rrows.filter(function (r) { return r.lift >= 0.15; }).sort(function (a, b) { return b.lift - a.lift; }).slice(0, 6);
+    var rgood = rrows.filter(function (r) { return r.lift <= -0.15; }).sort(function (a, b) { return a.lift - b.lift; }).slice(0, 4);
+    if (rbad.length) { rp.appendChild(el("div", { "class": "grp", text: "Repeats before rougher nights" })); rbad.forEach(function (r) { addRP(r, "bad", "", true); }); }
+    if (rgood.length) { rp.appendChild(el("div", { "class": "grp", text: "Repeats before better nights" })); rgood.forEach(function (r) { addRP(r, "good", "", false); }); }
+    if (!rbad.length && !rgood.length) rp.appendChild(el("p", { "class": "sub", text: "Nothing has repeated enough to stand out yet. Keep logging and check back in a week or two." }));
+    else rp.appendChild(el("p", { "class": "note", text: "Each dot is one night, colored like the calendar (red is worst and green is best). These are patterns, not proof." }));
+  }
+  box.appendChild(rp);
 
   // factor patterns
   var det = all.filter(function (e) { return e.detailed; });

@@ -3,8 +3,8 @@
 // 2. Paste the ID and a long random phrase below. Use the same phrase as SYNC_KEY in index.html.
 // 3. Deploy as a Web app (Execute as: Me, Who has access: Anyone). Create a NEW deployment after every change.
 
-var SHEET_ID = "PASTE_SHEET_ID_HERE";
-var KEY = "PICK-A-LONG-RANDOM-PHRASE";
+var SHEET_ID = "1re2QO2i6cccapokH0f3agR973L_GYBGSJBwg4BnzZ0Y";
+var KEY = "6b97985fff1b168840c86ad5b25d6e40";
 var TAB = "SleepData";
 
 var HEAD = ["date", "quality", "minutes_asleep", "bed", "wake", "minutes_to_fall_asleep", "minutes_awake_at_night",
