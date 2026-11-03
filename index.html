@@ -175,7 +175,7 @@ details.cat .field{margin-bottom:12px}
       </div>
       <div class="legend l2" id="legend2"></div>
       <div class="stats" id="monthStats"></div>
-      <p class="note">Each day shows the night that ended that morning. The color strip is your cycle phase that night and the moon mark shows full and new moons. Tap any day to log or edit it.</p>
+      <p class="note">Each day shows the night that ended that morning. The moon mark shows full and new moons. Tap any day to log or edit it and to see where you were in your cycle that night.</p>
     </div>
   </section>
 
@@ -474,20 +474,12 @@ function renderCal() {
     var b = el("button", { "class": cls, type: "button", "data-d": ds, "aria-label": MONTHS[m] + " " + i }, [el("span", { text: String(i) })]);
     if (e && e.melatonin) b.appendChild(el("i", { text: "☾" }));
     if (ds <= t) {
-      var ph = phaseForNight(ds);
-      if (ph) { var strip = el("div", { "class": "st" }); strip.style.background = CY[ph][1]; b.appendChild(strip); }
       var mo = moonInfo(ds);
       if (mo.name === "Full Moon" || mo.name === "New Moon") b.appendChild(el("div", { "class": "mm", text: mo.emoji }));
     }
     grid.appendChild(b);
   }
   var lg = $("legend2"); lg.innerHTML = "";
-  if (cycle.periods.length) {
-    CY_ORDER.forEach(function (k) {
-      var b2 = el("b"); b2.style.background = CY[k][1];
-      lg.appendChild(el("span", {}, [b2, CY[k][0]]));
-    });
-  }
   lg.appendChild(el("span", { text: "\uD83C\uDF15 full moon \uD83C\uDF11 new moon" }));
   var st = $("monthStats"); st.innerHTML = "";
   [[String(qs.length), "nights logged"], [qs.length ? String(r1(avg(qs))) : "-", "average (1 to 5)"], [String(poor), "poor nights"]].forEach(function (s) {
